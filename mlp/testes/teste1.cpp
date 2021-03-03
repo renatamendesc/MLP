@@ -12,34 +12,40 @@ struct subseqInfo{
 };
 
 int main(){
-    vector <vector <subseqInfo>> matrizSubseq(7, vector <subseqInfo> (7));
-    vector <int> solucao = {1, 2, 3, 4, 5, 6, 1}; // tam = 7
+  //vector <vector <subseqInfo>> matrizSubseq(dimension+1, vector <subseqInfo> (dimension+1));
+  vector <int> solucao = {1, 2, 3, 4, 5, 6, 7, 8, 9, 1};
 
+  double custoParcial, custo = 0, tempoParcial, tempo = 0;
+  int tam = solucao.size();
+  vector <int> vizinho = solucao;
 
-    cout << matrizSubseq[6][5].custoAcumulado << endl; 
+  // i = inicio da subsequencia
+  // j = fim da subsequencia
 
-    // Atualização do custo acumulado:
-    for(int i = 0; i < solucao.size(); i++){
-      for(int j = i; j < solucao.size(); j++){ 
-        if(i == j){
-          matrizSubseq[i][j].tempoTotal = 0;
-        }else {
-          matrizSubseq[i][j].tempoTotal = matrizSubseq[i][j-1].tempoTotal + 1; 
-        }      
+  // custoAcumulado = matrizSubseq[0][i-1].custoAcumulado + ((j-i+1) * (matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i]])) + matrizSubseq[i][j].custoAcumulado
+
+  for(int i = 1; i < tam; i++){
+    for(int j = i+1; j < tam-1; j++){
+      int aux, k = j - i;
+
+      if(k % 2 != 0){
+        k = k + 1;
       }
-    }
 
-    // Atualização do custo acumulado:
-    for(int i = 0; i < solucao.size(); i++){
-      for(int j = i; j < solucao.size(); j++){ 
-        if(i == j){
-          matrizSubseq[i][j].custoAcumulado = 0;
-        }else {
-          matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j-1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
-        }      
+      for(int q = 0; q < k/2; q++){
+        aux = vizinho[i+q];
+        vizinho[i+q] = vizinho[j-q];
+        vizinho[j-q] = aux;
       }
+
+      cout << "Vizinho: ";
+      for(int q = 0; q < vizinho.size(); q++){
+        cout << vizinho[q] << " ";
+      }
+
+      cout << endl;
+
+      vizinho = solucao;
     }
-
-    cout << matrizSubseq[1][6].custoAcumulado << endl;
-
+  }
 }
