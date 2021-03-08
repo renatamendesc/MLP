@@ -33,9 +33,40 @@ bool comparacao(insercaoInfo a, insercaoInfo b){
   return a.custo < b.custo;
 }
 
+// Estrutura de vizinhança swap:
+vizinhoInfo swap(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
+  double custoParcial, custo, tempoParcial;
+  int tam = solucao.size();
+  vizinhoInfo melhorVizinho;
+  melhorVizinho.custoMenor = DBL_MAX;
+
+  for(int i = 1; i < tam-2; i++){
+    for(int j = i+1; j < tam-1; j++){
+      custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+      tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+
+      custoParcial = custoParcial + (((j-1)-(i+1)) * (tempoParcial + matrizAdj[solucao[j]][solucao[i+1]] + matrizSubseq[i+1][j-1].custoAcumulado));
+      tempoParcial = tempoParcial  + matrizSubseq[i+1][j-1].tempoTotal + matrizAdj[solucao[j]][solucao[i+1]];
+
+      custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
+      tempoParcial = tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
+
+      custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+
+      if(custo < melhorVizinho.custoMenor){    
+        melhorVizinho.iMenor = i;
+        melhorVizinho.jMenor = j;
+        melhorVizinho.custoMenor = custo;
+	    } 
+    }
+  }
+
+  return melhorVizinho;
+}
+
 // Estrutura de vizinhança 2-opt:
 vizinhoInfo twoOpt(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
-  double custoParcial, custo = 0, tempoParcial;
+  double custoParcial, custo, tempoParcial;
   int tam = solucao.size();
   vizinhoInfo melhorVizinho;
   melhorVizinho.custoMenor = DBL_MAX;
