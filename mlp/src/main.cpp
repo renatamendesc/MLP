@@ -136,13 +136,70 @@ vizinhoInfo reinsertion(vector <int> &solucao, vector <vector <subseqInfo>> & ma
 }
 
 // Estrutura de vizinhança or-opt-2:
-vizinhoInfo oropt2(vector <int> &solucao, vector <vector <subseqInfo>> & matrizSubseq){
+vizinhoInfo oropt2(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
   double custoParcial, custo, tempoParcial;
   int tam = solucao.size();
   vizinhoInfo melhorVizinho;
   melhorVizinho.custoMenor = DBL_MAX;
 
-  
+  for(int i = 1; i < tam-2; i++){
+    for(int j = 1; j <= tam-3; j++){
+      if(i != j){
+        if(i < j){
+          custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+2]];
+          tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+2]];
+
+          custoParcial = custoParcial + ((j-i) * (tempoParcial)) + matrizSubseq[i+2][j+1].custoAcumulado + matrizSubseq[i+2][j+1].tempoTotal + matrizAdj[solucao[j+1]][solucao[i]];
+          tempoParcial = tempoParcial + matrizSubseq[i+2][j+1].tempoTotal + matrizAdj[solucao[j+1]][solucao[i]];
+
+          custoParcial = custoParcial + (2 * (tempoParcial + matrizAdj[solucao[i]][solucao[i+1]]) + matrizAdj[solucao[i+1]][solucao[j+2]];
+          tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[i+1]] + matrizAdj[solucao[i+1]][solucao[j+2]];
+
+          custo = custoParcial + ((dimension-(j+2)) * (tempoParcial)) + matrizSubseq[j+2][dimension].custoAcumulado;
+        }else{
+
+        }
+
+        if(custo < melhorVizinho.custoMenor){    
+          melhorVizinho.iMenor = i;
+          melhorVizinho.jMenor = j;
+          melhorVizinho.custoMenor = custo;
+	      } 
+      }
+    }
+  }
+
+  return melhorVizinho;
+}
+
+// Estrutura de vizinhança or-opt-3:
+vizinhoInfo oropt3(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
+  double custoParcial, custo, tempoParcial;
+  int tam = solucao.size();
+  vizinhoInfo melhorVizinho;
+  melhorVizinho.custoMenor = DBL_MAX;
+
+  for(int i = 1; i < tam-3; i++){
+    for(int j = 1; j <= tam-4; j++){
+      if(i != j){
+        if(i < j){
+          custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+3]];
+          tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+3]];
+
+          custoParcial = custoParcial + ((j-i-1) * (tempoParcial + matrizAdj[solucao[i+3]][solucao[i+4]])) + matrizAdj[solucao[j+1]][solucao[i]];
+          tempoParcial = tempoParcial + matrizSubseq[i+3][i+4].tempoTotal + matrizAdj[solucao[j+1]][solucao[i]];
+
+          custoParcial = custoParcial + (3 * (tempoParcial) + matrizSubseq[i][i+2].custoAcumulado + matrizSubseq[i][i+2].tempoTotal + matrizAdj[solucao[i+2]][solucao[j+2]];
+          tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal + matrizAdj[solucao[i+2]][solucao[j+2]];
+
+          custo = custoParcial + ((dimension-(j+2)) * (tempoParcial)) + matrizSubseq[j+2][dimension].custoAcumulado;
+        }else{
+
+        }
+      }
+    }
+  }
+
 }
 
 // Função referente à etapa da construção:
