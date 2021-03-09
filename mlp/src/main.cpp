@@ -89,6 +89,62 @@ vizinhoInfo twoOpt(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
   return melhorVizinho;
 }
 
+// Estrutura de vizinhança reinsertion:
+vizinhoInfo reinsertion(vector <int> &solucao, vector <vector <subseqInfo>> & matrizSubseq){
+  double custoParcial, custo, tempoParcial;
+  int tam = solucao.size();
+  vizinhoInfo melhorVizinho;
+  melhorVizinho.custoMenor = DBL_MAX;
+
+  for(int i = 1; i < tam-2; i++){
+    for(int j = i + 1; j < tam-1; j++){
+      custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+1]];
+      tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+1]];
+
+      custoParcial = custoParcial + ((j-i) * (t1 + matrizAdj[solucao[i+1]][solucao[i+2]])) + matrizSubseq[i+2][j].custoAcumulado + matrizSubseq[i+2][j].tempoTotal + matrizAdj[solucao[j]][solucao[i]];
+      tempoParcial = tempoParcial + matrizSubseq[i+1][j].tempoTotal + matrizAdj[solucao[j]][solucao[i]];
+
+      custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+
+      if(custo < melhorVizinho.custoMenor){    
+        melhorVizinho.iMenor = i;
+        melhorVizinho.jMenor = j;
+        melhorVizinho.custoMenor = custo;
+	    } 
+    }
+  }
+
+  for(int j = 1; j < tam-2; j++){
+    for(int i = j + 1; i < tam-1; i++){
+      custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
+      tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
+
+      custoParcial = custoParcial + ((i-j) * (tempoParcial + matrizAdj[solucao[i][solucao[j]])) + matrizSubseq[j][i-1].custoAcumulado;
+      tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[j]] + matrizSubseq[j][i-1].tempoTotal;
+
+      custo = custoParcial + ((dimension-i) * (tempoParcial + matrizAdj[solucao[i-1]][solucao[i+1]])) + matrizSubseq[i+1][dimension].custoAcumulado;
+
+      if(custo < melhorVizinho.custoMenor){    
+        melhorVizinho.iMenor = i;
+        melhorVizinho.jMenor = j;
+        melhorVizinho.custoMenor = custo;
+	    } 
+    }
+  }
+
+  return melhorVizinho;
+}
+
+// Estrutura de vizinhança or-opt-2:
+vizinhoInfo oropt2(vector <int> &solucao, vector <vector <subseqInfo>> & matrizSubseq){
+  double custoParcial, custo, tempoParcial;
+  int tam = solucao.size();
+  vizinhoInfo melhorVizinho;
+  melhorVizinho.custoMenor = DBL_MAX;
+
+  
+}
+
 // Função referente à etapa da construção:
 vector <int> construcao(vector <int> listaCandidatos, double valorAleatorio){
   vector <int> solucaoInicial;

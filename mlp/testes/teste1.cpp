@@ -17,35 +17,44 @@ int main(){
 
   double custoParcial, custo = 0, tempoParcial, tempo = 0;
   int tam = solucao.size();
-  vector <int> vizinho = solucao;
+  vector <int > solucaoInicial = solucao;
+  vector <int > vizinho = solucao;
 
-  // i = inicio da subsequencia
-  // j = fim da subsequencia
 
-  // custoAcumulado = matrizSubseq[0][i-1].custoAcumulado + ((j-i+1) * (matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i]])) + matrizSubseq[i][j].custoAcumulado
+  for(int i = 1; i < tam-2; i++){
+    for(int j = i + 1; j < tam-1; j++){
 
-  for(int i = 1; i < tam; i++){
-    for(int j = i+1; j < tam-1; j++){
-      int aux, k = j - i;
+      solucaoInicial.erase(solucaoInicial.begin()+i);
+      solucaoInicial.insert(solucaoInicial.begin()+j, vizinho[i]);
 
-      if(k % 2 != 0){
-        k = k + 1;
+      printf("Vizinho[%d][%d]: ", i, j);
+      for(int l = 0; l < tam; l++){
+        printf("%d ", solucaoInicial[l]);
       }
-
-      for(int q = 0; q < k/2; q++){
-        aux = vizinho[i+q];
-        vizinho[i+q] = vizinho[j-q];
-        vizinho[j-q] = aux;
-      }
-
-      cout << "Vizinho: ";
-      for(int q = 0; q < vizinho.size(); q++){
-        cout << vizinho[q] << " ";
-      }
-
       cout << endl;
 
+      solucaoInicial = solucao;
       vizinho = solucao;
     }
   }
+
+  cout << endl;
+
+  for(int j = 1; j < tam-2; j++){
+    for(int i = j + 1; i < tam-1; i++){
+
+      solucaoInicial.erase(solucaoInicial.begin()+i);
+      solucaoInicial.insert(solucaoInicial.begin()+j, vizinho[i]);
+
+      printf("Vizinho[%d][%d]: ", i, j);
+      for(int l = 0; l < tam; l++){
+        printf("%d ", solucaoInicial[l]);
+      }
+      cout << endl;
+
+      solucaoInicial = solucao;
+      vizinho = solucao;
+    }
+  }
+
 }
