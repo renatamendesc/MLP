@@ -1,0 +1,194 @@
+C = C(subseq 1) + N * (T(subseq 1) + [sub1][sub2]) + C(subseq 2)
+T = T(subseq 1) + [sub1][sub2] + T(subseq 2)
+
+---------------------------------------------------------------------------------
+2-opt:
+{1, 2, 3, 4, 5, 6, 7, 8, 9, 1} -> {1, 2, 6, 5, 4, 3, 7, 8, 9, 1}
+
+Primeiro nó da subsequencia: i = 2 (3)
+Posição a ser inserido: j = 5 (6)
+
+{1, 2}
+{2, 6} - Novo
+{6, 5, 4, 3}
+{3, 7} - Novo
+{7, 8, 9, 1}
+
+Custo = T[1][2]
+
+        T[1][2]    + T[2][6]
+        T[1][2]    + T[2][6]     + T[6][5]                            + T[6][5]
+        T[1][2]    + T[2][6]     + T[6][5] + T[5][4]            =     + T[6][5] + T[5][4]
+        T[1][2]    + T[2][6]     + T[6][5] + T[5][4] + T[4][3]        + T[6][5] + T[5][4] + T[4][3]
+        
+        T[1][2] + T[2][6] + T[6][5] + T[5][4] + T[4][3]      + T[3][7]
+        T[1][2] + T[2][6] + T[6][5] + T[5][4] + T[4][3]      + T[3][7]     + T[7][8]
+        T[1][2] + T[2][6] + T[6][5] + T[5][4] + T[4][3]      + T[3][7]     + T[7][8] + T[8][9]
+        T[1][2] + T[2][6] + T[6][5] + T[5][4] + T[4][3]      + T[3][7]     + T[7][8] + T[8][9] + T[9][1]
+
+custoParcial = matrizSubseq[0][i-1].custoAcumulado + ((j-i+1) * (matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i]])) + matrizSubseq[i][j].custoAcumulado;
+tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i]] + matrizSubseq[i][j].tempoTotal;
+
+custo = custoParcial + ((j+1) * (tempoParcial + matrizAdj[solucao[j]][solucao[j+1]]) + matrizSubseq[j+1][dimension].custoAcumulado);
+
+---------------------------------------------------------------------------------
+Swap: (OK)
+{1, 2, 3, 4, 5, 6, 7, 8, 9, 1} -> {1, 5, 3, 4, 2, 6, 7, 8, 9, 1}
+
+Primeiro nó a ser trocado: i = 1 (2)
+Segundo nó a ser trocado: j = 4 (5)
+
+Custo = T[1][5]
+        T[1][5] + T[5][3]                      
+        T[1][5] + T[5][3] + T[3][4]                   
+        T[1][5] + T[5][3] + T[3][4] + T[4][2]        
+        T[1][5] + T[5][3] + T[3][4] + T[4][2] + T[2][6]
+        T[1][5] + T[5][3] + T[3][4] + T[4][2] + T[2][6] + T[6][7]        
+        T[1][5] + T[5][3] + T[3][4] + T[4][2] + T[2][6] + T[6][7] + T[7][8]        
+        T[1][5] + T[5][3] + T[3][4] + T[4][2] + T[2][6] + T[6][7] + T[7][8] + T[8][9]
+        T[1][5] + T[5][3] + T[3][4] + T[4][2] + T[2][6] + T[6][7] + T[7][8] + T[8][9] + T[9][1]
+        
+if (j == i + 1):
+custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+
+custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i]];
+tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i]];
+
+custo = custoParcial + ((dimension-j) * (tempoTotal + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+
+else:
+
+custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+
+custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i+1]];
+tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i+1]];
+
+custoParcial = custoParcial + ((j-i-2) * (tempoParcial)) + matrizSubseq[i+1][j-1].custoAcumulado;
+tempoParcial = tempoParcial + matrizSubseq[i+1][j-1].tempoTotal;
+
+custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
+tempoParcial = tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
+
+custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+
+---------------------------------------------------------------------------------
+Reinsertion: (OK)
+{1, 2, 3, 4, 5, 6, 7, 8, 9, 1} -> {1, 2, 3, 4, 9, 5, 6, 7, 8, 1}
+
+Primeiro nó da subsequencia: i = 8 (9)
+Posição a ser inserido: j = 4 (5)
+
+{1, 2, 3, 4}
+{4, 9} - Novo
+{9, 5} - Novo
+{5, 6, 7, 8}
+{8, 1} - Novo
+
+
+Custo = T[1][2]
+        T[1][2] + T[2][3]
+        T[1][2] + T[2][3] + T[3][4]               
+        T[1][2] + T[2][3] + T[3][4] + T[4][9]                 
+        T[1][2] + T[2][3] + T[3][4] + T[4][9] + T[9][5]                      
+        T[1][2] + T[2][3] + T[3][4] + T[4][9] + T[9][5] + T[5][6]        
+        T[1][2] + T[2][3] + T[3][4] + T[4][9] + T[9][5] + T[5][6] + T[6][7]        
+        T[1][2] + T[2][3] + T[3][4] + T[4][9] + T[9][5] + T[5][6] + T[6][7] + T[7][8]               
+        T[1][2] + T[2][3] + T[3][4] + T[4][9] + T[9][5] + T[5][6] + T[6][7] + T[7][8] + T[8][1]
+        
+if (i < j):
+        
+custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+1]];
+tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+1]];
+
+custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+1][j].custoAcumulado;
+tempoParcial = tempoParcial + matrizSubseq[i+1][j].tempoTotal;
+
+custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j][solucao[i]];
+tempoParcial = tempoParcial + matrizAdj[solucao[j][solucao[i]]
+
+custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+
+else:
+
+custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
+tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
+
+custoParcial = custoParcial + ((i-j) * (tempoParcial + matrizAdj[solucao[i][solucao[j]])) + matrizSubseq[j][i-1].custoAcumulado;
+tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[j]] + matrizSubseq[j][i-1].tempoTotal;
+
+custo = custoParcial + ((dimension-i) * (tempoParcial + matrizAdj[solucao[i-1]][solucao[i+1]])) + matrizSubseq[i+1][dimension].custoAcumulado;
+
+---------------------------------------------------------------------------------
+Or-Opt-3:
+{1, 2, 3, 4, 5, 6, 7, 8, 9, 1} -> {1, 2, 6, 7, 3, 4, 5, 8, 9, 1}
+
+Primeiro nó da subsequencia: i = 2 (3)
+Posição a ser inserido: j = 5 (6)
+
+{1, 2}
+{2, 6} - Novo
+{6, 7}
+{7, 3} - Novo
+{3, 4, 5}
+{5, 8} - Novo
+{8, 9, 1}
+
+Custo = T[1][2]
+        T[1][2] + T[2][6]
+        
+        T[1][2] + T[2][6] + T[6][7]
+        T[1][2] + T[2][6] + T[6][7] + T[7][3]
+        
+        T[1][2] + T[2][6] + T[6][7] + T[7][3] + T[3][4]
+        T[1][2] + T[2][6] + T[6][7] + T[7][3] + T[3][4] + T[4][5]
+        T[1][2] + T[2][6] + T[6][7] + T[7][3] + T[3][4] + T[4][5] + T[5][8]
+        
+        T[1][2] + T[2][6] + T[6][7] + T[7][3] + T[3][4] + T[4][5] + T[5][8] + T[8][9]
+        T[1][2] + T[2][6] + T[6][7] + T[7][3] + T[3][4] + T[4][5] + T[5][8] + T[8][9] + T[9][1]
+        
+custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+3]];
+tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+3]];
+
+custoParcial = custoParcial + ((j-i-1) * (tempoParcial + matrizAdj[solucao[i+3]][solucao[i+4]])) + matrizAdj[solucao[j+1]][solucao[i]];
+tempoParcial = tempoParcial + matrizSubseq[i+3][i+4].tempoTotal + matrizAdj[solucao[j+1]][solucao[i]];
+
+custoParcial = custoParcial + (3 * (tempoParcial) + matrizSubseq[i][i+2].custoAcumulado + matrizSubseq[i][i+2].tempoTotal + matrizAdj[solucao[i+2]][solucao[j+2]];
+tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal + matrizAdj[solucao[i+2]][solucao[j+2]];
+
+custo = custoParcial + ((dimension-(j+2)) * (tempoParcial)) + matrizSubseq[j+2][dimension].custoAcumulado;
+
+--------------------------------------------------------------------------------
+Or-Opt-2:
+{1, 2, 3, 4, 5, 6, 7, 8, 9, 1} -> {1, 4, 2, 3, 5, 6, 7, 8, 9, 1}
+
+Primeiro nó da subsequencia: i = 1 (2)
+Posição a ser inserido: j = 2 (3)
+
+{1, 4, 2} - Novo
+{2, 3}
+{3, 5} - Novo
+{5, 6, 7, 8, 9, 1}
+
+Custo = T[1][4]
+        T[1][4] + T[4][2]
+        T[1][4] + T[4][2] + T[2][3]
+        T[1][4] + T[4][2] + T[2][3] + T[3][5]
+        T[1][4] + T[4][2] + T[2][3] + T[3][5] + T[5][6]
+        T[1][4] + T[4][2] + T[2][3] + T[3][5] + T[5][6] + T[6][7]
+        T[1][4] + T[4][2] + T[2][3] + T[3][5] + T[5][6] + T[6][7] + T[7][8]
+        T[1][4] + T[4][2] + T[2][3] + T[3][5] + T[5][6] + T[6][7] + T[7][8] + T[8][9]
+        T[1][4] + T[4][2] + T[2][3] + T[3][5] + T[5][6] + T[6][7] + T[7][8] + T[8][9] + T[9][1]
+
+custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+2]];
+tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+2]];
+
+custoParcial = custoParcial + ((j-i) * (tempoParcial)) + matrizSubseq[i+2][j+1].custoAcumulado + matrizSubseq[i+2][j+1].tempoTotal + matrizAdj[solucao[j+1]][solucao[i]];
+tempoParcial = tempoParcial + matrizSubseq[i+2][j+1].tempoTotal + matrizAdj[solucao[j+1]][solucao[i]];
+
+custoParcial = custoParcial + (2 * (tempoParcial + matrizAdj[solucao[i]][solucao[i+1]]) + matrizAdj[solucao[i+1]][solucao[j+2]];
+tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[i+1]] + matrizAdj[solucao[i+1]][solucao[j+2]];
+
+custo = custoParcial + ((dimension-(j+2)) * (tempoParcial)) + matrizSubseq[j+2][dimension].custoAcumulado;
+
