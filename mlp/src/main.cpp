@@ -42,16 +42,30 @@ vizinhoInfo swap(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubs
 
   for(int i = 1; i < tam-2; i++){
     for(int j = i+1; j < tam-1; j++){
-      custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
-      tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+      if(j == i +1){
+        custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+        tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
 
-      custoParcial = custoParcial + (((j-1)-(i+1)) * (tempoParcial + matrizAdj[solucao[j]][solucao[i+1]] + matrizSubseq[i+1][j-1].custoAcumulado));
-      tempoParcial = tempoParcial  + matrizSubseq[i+1][j-1].tempoTotal + matrizAdj[solucao[j]][solucao[i+1]];
+        custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i]];
+        tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i]];
 
-      custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
-      tempoParcial = tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
+        custo = custoParcial + ((dimension-j) * (tempoTotal + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
 
-      custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+      }else{
+        custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+        tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+
+        custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i+1]];
+        tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i+1]];
+
+        custoParcial = custoParcial + ((j-i-2) * (tempoParcial)) + matrizSubseq[i+1][j-1].custoAcumulado;
+        tempoParcial = tempoParcial + matrizSubseq[i+1][j-1].tempoTotal;
+
+        custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
+        tempoParcial = tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
+
+        custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+      }
 
       if(custo < melhorVizinho.custoMenor){    
         melhorVizinho.iMenor = i;
@@ -101,8 +115,11 @@ vizinhoInfo reinsertion(vector <int> &solucao, vector <vector <subseqInfo>> & ma
       custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+1]];
       tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+1]];
 
-      custoParcial = custoParcial + ((j-i) * (t1 + matrizAdj[solucao[i+1]][solucao[i+2]])) + matrizSubseq[i+2][j].custoAcumulado + matrizSubseq[i+2][j].tempoTotal + matrizAdj[solucao[j]][solucao[i]];
-      tempoParcial = tempoParcial + matrizSubseq[i+1][j].tempoTotal + matrizAdj[solucao[j]][solucao[i]];
+      custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+1][j].custoAcumulado;
+      tempoParcial = tempoParcial + matrizSubseq[i+1][j].tempoTotal;
+
+      custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j][solucao[i]];
+      tempoParcial = tempoParcial + matrizAdj[solucao[j][solucao[i]];
 
       custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
 
