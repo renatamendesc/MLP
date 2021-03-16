@@ -24,7 +24,9 @@ struct vizinhoInfo{
 };
 
 struct subseqInfo{
-  double tempoTotal, custoAcumulado, vertices;
+  double tempoTotal;
+  double custoAcumulado;
+  double vertices;
 };
 
 
@@ -87,10 +89,10 @@ vizinhoInfo twoOpt(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
 
   for(int i = 1; i < tam; i++){
     for(int j = i+1; j < tam-1; j++){
-      custoParcial = matrizSubseq[0][i-1].custoAcumulado + ((j-i+1) * (matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i]])) + matrizSubseq[i][j].custoAcumulado;
-      tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i]] + matrizSubseq[i][j].tempoTotal;
+      custoParcial = matrizSubseq[0][i-1].custoAcumulado + ((j-i+1) * (matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]])) + matrizSubseq[j][i].custoAcumulado;
+      tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]] + matrizSubseq[j][i].tempoTotal;
 
-      custo = custoParcial + ((j+1) * (tempoParcial + matrizAdj[solucao[j]][solucao[j+1]]) + matrizSubseq[j+1][dimension].custoAcumulado);
+      custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]]) + matrizSubseq[j+1][dimension].custoAcumulado);
 
       if(custo < melhorVizinho.custoMenor){    
         melhorVizinho.iMenor = i;
@@ -301,6 +303,7 @@ vector <int> construcao(vector <int> listaCandidatos, double valorAleatorio){
         listaCandidatos.erase(listaCandidatos.begin()+j);
     }
   }
+  
   return solucaoInicial;
 }
 
@@ -314,7 +317,8 @@ void atualizaSubseq(vector <vector <subseqInfo>> &matrizSubseq, vector <int> &so
       if(i == j){
         matrizSubseq[i][j].tempoTotal = 0;
       }else {
-        matrizSubseq[i][j].tempoTotal = matrizSubseq[i][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[j]]; 
+        matrizSubseq[i][j].tempoTotal = matrizSubseq[i][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[j]];
+        matrizSubseq[j][i].tempoTotal = matrizSubseq[i][j].tempoTotal;  
       }
     }
   }
@@ -326,6 +330,16 @@ void atualizaSubseq(vector <vector <subseqInfo>> &matrizSubseq, vector <int> &so
         matrizSubseq[i][j].custoAcumulado = 0;
       }else {
         matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j-1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
+      }      
+    }
+  }
+
+  for(int i = tam-1; i >= 0; i--){
+    for(int j = i; j >= 0; j--){ 
+      if(i == j){
+        matrizSubseq[i][j].custoAcumulado = 0;
+      }else{
+        matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j+1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
       }      
     }
   }

@@ -20,6 +20,7 @@ int main(){
   vector <int > solucao = solucaoInicial;
   vector <int > vizinho = solucaoInicial;
 
+  // Or-opt-3:
   for(int i = 1; i < tam-3; i++){
     for(int j = 1; j <= tam-4; j++){
       if(i != j){

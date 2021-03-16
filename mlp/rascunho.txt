@@ -3,27 +3,25 @@ T = T(subseq 1) + [sub1][sub2] + T(subseq 2)
 
 ---------------------------------------------------------------------------------
 2-opt:
-{1, 2, 3, 4, 5, 6, 7, 8, 9, 1} -> {1, 2, 6, 5, 4, 3, 7, 8, 9, 1}
+{1, 2, 3, 4, 5, 6, 7, 8, 9, 1} -> {1, 6, 5, 4, 3, 2, 7, 8, 9, 1}
 
-Primeiro nó da subsequencia: i = 2 (3)
-Posição a ser inserido: j = 5 (6)
+Primeiro nó da subsequencia: i = 1 (2)
+Ultimo nó da subsequencia: j = 5 (6)
 
-Custo = T[1][2]
+Custo = T[1][6]
+        T[1][6] + T[6][5]
+        T[1][6] + T[6][5] + T[5][4]                         
+        T[1][6] + T[6][5] + T[5][4] + T[4][3]           
+        T[1][6] + T[6][5] + T[5][4] + T[4][3] + T[3][2]                  
+        T[1][6] + T[6][5] + T[5][4] + T[4][3] + T[3][2] + T[2][7]
+        T[1][6] + T[6][5] + T[5][4] + T[4][3] + T[3][2] + T[2][7] + T[7][8]
+        T[1][6] + T[6][5] + T[5][4] + T[4][3] + T[3][2] + T[2][7] + T[7][8] + T[8][9]
+        T[1][6] + T[6][5] + T[5][4] + T[4][3] + T[3][2] + T[2][7] + T[7][8] + T[8][9] + T[9][1]
 
-        T[1][2]    + T[2][6]
-        T[1][2]    + T[2][6]     + T[6][5]                            + T[6][5]
-        T[1][2]    + T[2][6]     + T[6][5] + T[5][4]            =     + T[6][5] + T[5][4]
-        T[1][2]    + T[2][6]     + T[6][5] + T[5][4] + T[4][3]        + T[6][5] + T[5][4] + T[4][3]
-        
-        T[1][2] + T[2][6] + T[6][5] + T[5][4] + T[4][3]      + T[3][7]
-        T[1][2] + T[2][6] + T[6][5] + T[5][4] + T[4][3]      + T[3][7]     + T[7][8]
-        T[1][2] + T[2][6] + T[6][5] + T[5][4] + T[4][3]      + T[3][7]     + T[7][8] + T[8][9]
-        T[1][2] + T[2][6] + T[6][5] + T[5][4] + T[4][3]      + T[3][7]     + T[7][8] + T[8][9] + T[9][1]
+custoParcial = matrizSubseq[0][i-1].custoAcumulado + ((j-i+1) * (matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]])) + matrizSubseq[j][i].custoAcumulado;
+tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]] + matrizSubseq[j][i].tempoTotal;
 
-custoParcial = matrizSubseq[0][i-1].custoAcumulado + ((j-i+1) * (matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i]])) + matrizSubseq[i][j].custoAcumulado;
-tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i]] + matrizSubseq[i][j].tempoTotal;
-
-custo = custoParcial + ((j+1) * (tempoParcial + matrizAdj[solucao[j]][solucao[j+1]]) + matrizSubseq[j+1][dimension].custoAcumulado);
+custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]]) + matrizSubseq[j+1][dimension].custoAcumulado);
 
 ---------------------------------------------------------------------------------
 Swap: (OK)
