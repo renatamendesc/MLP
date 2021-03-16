@@ -20,19 +20,23 @@ int main(){
   vector <int > solucao = solucaoInicial;
   vector <int > vizinho = solucaoInicial;
 
-  for(int i = 1; i < tam-2; i++){
-    for(int j = 1; j <= tam-3; j++){
+  for(int i = 1; i < tam-3; i++){
+    for(int j = 1; j <= tam-4; j++){
       if(i != j){
         if(i < j){
-          solucao.insert(solucao.begin() + j + 2, solucao[i]); 
-          solucao.insert(solucao.begin() + j+ 3, solucao[i+1]); 
+          solucao.insert(solucao.begin() + j + 3, solucao[i]);
+          solucao.insert(solucao.begin() + j + 4, solucao[i+1]); 
+          solucao.insert(solucao.begin() + j + 5, solucao[i+2]);
+          solucao.erase(solucao.begin() + i);
           solucao.erase(solucao.begin() + i);
           solucao.erase(solucao.begin() + i);
         } else {
-          solucao.insert(solucao.begin() + j, solucao[i]); 
+          solucao.insert(solucao.begin() + j, solucao[i]);
           solucao.insert(solucao.begin() + j + 1, solucao[i + 2]); 
-          solucao.erase(solucao.begin() + i + 2);
-          solucao.erase(solucao.begin() + i + 2);
+          solucao.insert(solucao.begin() + j + 2, solucao[i +  4]); 
+          solucao.erase(solucao.begin() + i + 3);
+          solucao.erase(solucao.begin() + i + 3);
+          solucao.erase(solucao.begin() + i + 3);
         }
       }
 

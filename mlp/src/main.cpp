@@ -42,7 +42,7 @@ vizinhoInfo swap(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubs
 
   for(int i = 1; i < tam-2; i++){
     for(int j = i+1; j < tam-1; j++){
-      if(j == i +1){
+      if(j == i + 1){
         custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
         tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
 
@@ -215,23 +215,45 @@ vizinhoInfo oropt3(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
     for(int j = 1; j <= tam-4; j++){
       if(i != j){
         if(i < j){
-          custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+3]];
-          tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1][solucao[i+3]];
+          custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+3]];
+          tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+3]];
 
-          custoParcial = custoParcial + ((j-i-1) * (tempoParcial + matrizAdj[solucao[i+3]][solucao[i+4]])) + matrizAdj[solucao[j+1]][solucao[i]];
-          tempoParcial = tempoParcial + matrizSubseq[i+3][i+4].tempoTotal + matrizAdj[solucao[j+1]][solucao[i]];
+          custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+3][j+2].custoAcumulado;
+          tempoParcial = tempoParcial + matrizSubseq[i+3][j+2].tempoTotal;
 
-          custoParcial = custoParcial + (3 * (tempoParcial) + matrizSubseq[i][i+2].custoAcumulado + matrizSubseq[i][i+2].tempoTotal + matrizAdj[solucao[i+2]][solucao[j+2]];
-          tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal + matrizAdj[solucao[i+2]][solucao[j+2]];
+          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j+2][solucao[i]];
+          tempoParcial = tempoParcial + matrizAdj[solucao[j+2][solucao[i]]
 
-          custo = custoParcial + ((dimension-(j+2)) * (tempoParcial)) + matrizSubseq[j+2][dimension].custoAcumulado;
+          custoParcial = custoParcial + ((2) * (tempoParcial)) + matrizSubseq[i][i+2].custoAcumulado;
+          tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal;
+
+          custo = custoParcial + ((dimension-j-2) * (tempoParcial + matrizAdj[solucao[i+2]][solucao[j+3]])) + matrizSubseq[j+3][dimension].custoAcumulado;
         }else{
+          custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
+          tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
 
+          custoParcial = custoParcial + ((2) * (tempoParcial)) + matrizSubseq[i][i+2].custoAcumualdo;
+          tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal;
+
+          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i+2][solucao[j]];
+          tempoParcial = tempoParcial + matrizAdj[solucao[i+2][solucao[j]];
+
+          custoParcial = custoParcial + ((i-j-1) * (tempoParcial)) + matrizSubseq[j][i-1].custoAcumulado;
+          tempoParcial = tempoParcial + matrizSubseq[j][i-1].tempoTotal;
+
+          custo = custoParcial + ((dimension-i-2) * (tempoParcial + matrizAdj[solucao[i-1]][solucao[i+3]])) + matrizSubseq[i+3][dimension].custoAcumulado;
         }
+
+        if(custo < melhorVizinho.custoMenor){    
+          melhorVizinho.iMenor = i;
+          melhorVizinho.jMenor = j;
+          melhorVizinho.custoMenor = custo;
+	      }
       }
     }
   }
 
+  return melhorVizinho;
 }
 
 // Função referente à etapa da construção:
