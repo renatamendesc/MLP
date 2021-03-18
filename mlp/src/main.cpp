@@ -52,7 +52,6 @@ vizinhoInfo swap(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubs
         tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i]];
 
         custo = custoParcial + ((dimension-j) * (tempoTotal + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
-
       }else{
         custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
         tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
@@ -258,6 +257,171 @@ vizinhoInfo oropt3(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
   return melhorVizinho;
 }
 
+// Função que atualiza valores do custo acumulado e tempo total:
+void atualizaSubseq(vector <vector <subseqInfo>> &matrizSubseq, vector <int> &solucao){
+  int tam = solucao.size();
+
+  // Atualização do tempo total:
+  for(int i = 0; i < tam; i++){
+    for(int j = i; j < tam; j++){
+      if(i == j){
+        matrizSubseq[i][j].tempoTotal = 0;
+      }else {
+        matrizSubseq[i][j].tempoTotal = matrizSubseq[i][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[j]];
+        matrizSubseq[j][i].tempoTotal = matrizSubseq[i][j].tempoTotal;  
+      }
+    }
+  }
+
+  // Atualização do custo acumulado:
+  for(int i = 0; i < tam; i++){
+    for(int j = i; j < tam; j++){ 
+      if(i == j){
+        matrizSubseq[i][j].custoAcumulado = 0;
+      }else {
+        matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j-1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
+      }      
+    }
+  }
+
+  for(int i = tam-1; i >= 0; i--){
+    for(int j = i; j >= 0; j--){ 
+      if(i == j){
+        matrizSubseq[i][j].custoAcumulado = 0;
+      }else{
+        matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j+1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
+      }      
+    }
+  }
+}
+
+// Função com os movimentos de vizinhança:
+void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
+  vector <int> movimentos = {0, 1, 2, 3, 4};
+  vizinhoInfo vizinho;
+
+  while(!movimentos.empty()){
+    int escolhido = rand() % movimentos.size();
+
+    if(movimento[escolhido] == 0){
+      vizinho = swap(solucao, matrizSubseq);
+
+      //Realiza o movimento:
+      if(vizinho.custoMenor < 0){
+
+        int aux = solucao[vizinho.iMenor];
+	      solucao[vizinho.iMenor] = solucao[vizinho.jMenor];
+	      solucao[vizinho.jMenor] = aux;
+
+        atualizaSubseq(matrizSubseq, solucao);
+        movimentos = {0, 1, 2, 3, 4};
+
+      }else {
+        movimentos.erase(movimentos.begin() + escolhido);
+      }
+
+    }else if(movimentos[escolhido] == 1){
+
+      vizinho = reinsertion(solucao, matrizSubseq);
+
+      if(vizinho.custoMenor < 0){
+        vector <int> solucaoInicial = solucao;
+
+        solucao.erase(solucao.begin()+vizinho.iMenor);
+        solucao.insert(solucao.begin()+vizinho.jMenor, solucaoInicial[vizinho.iMenor]);
+
+        atualizaSubseq(matrizSubseq, solucao);
+        movimentos = {0, 1, 2, 3, 4};
+
+      }else {
+        movimentos.erase(movimentos.begin() + escolhido);
+      }
+
+    }else if(movimentos[escolhido] == 2){
+
+      vizinho = twoOpt(solucao, matrizSubseq);
+
+      if(vizinho.custoMenor < 0){
+        int aux, k = vizinho.jMenor - vizinho.iMenor;
+
+        if(k % 2 != 0){
+          k = k + 1;
+        }
+
+        for(int q = 0; q < k/2; q++){
+          aux = solucao[vizinho.iMenor+q];
+          solucao[vizinho.iMenor+q] = solucao[vizinho.jMenor-q];
+          solucao[vizinho.jMenor-q] = aux;
+        }
+
+        atualizaSubseq(matrizSubseq, solucao);
+        movimentos = {0, 1, 2, 3, 4};
+
+      } else {
+        movimentos.erase(movimentos.begin() + escolhido);
+      }
+
+    }else if(movimentos[escolhido] == 3){
+
+      vizinho = oropt2(solucao, matrizSubseq);
+
+      //Realiza o movimento:
+      if(vizinho.custoMenor < 0){
+        if(vizinho.iMenor < vizinho.jMenor){
+          solucao.insert(solucao.begin() + vizinho.jMenor + 2, solucao[vizinho.iMenor]); 
+          solucao.insert(solucao.begin() + vizinho.jMenor + 3, solucao[vizinho.iMenor+1]); 
+          solucao.erase(solucao.begin() + vizinho.iMenor);
+          solucao.erase(solucao.begin() + vizinho.iMenor);
+        } else {
+          solucao.insert(solucao.begin() + vizinho.jMenor, solucao[vizinho.iMenor]); 
+          solucao.insert(solucao.begin() + vizinho.jMenor + 1, solucao[vizinho.iMenor + 2]); 
+          solucao.erase(solucao.begin() + vizinho.iMenor + 2);
+          solucao.erase(solucao.begin() + vizinho.iMenor + 2);
+        }
+
+        atualizaSubseq(matrizSubseq, solucao);
+        movimentos = {0, 1, 2, 3, 4};
+
+      } else {
+        movimentos.erase(movimentos.begin() + escolhido);
+      }   
+
+    }else if(movimentos[escolhido] == 4){
+
+      vizinho = oropt3(solucao, matrizSubseq);
+
+      //Realiza o movimento:
+      if(vizinho.custoMenor < 0){
+        if(vizinho.iMenor < vizinho.jMenor){
+          solucao.insert(solucao.begin() + vizinho.jMenor + 3, solucao[vizinho.iMenor]);
+          solucao.insert(solucao.begin() + vizinho.jMenor + 4, solucao[vizinho.iMenor+1]); 
+          solucao.insert(solucao.begin() + vizinho.jMenor + 5, solucao[vizinho.iMenor+2]);
+          solucao.erase(solucao.begin() + vizinho.iMenor);
+          solucao.erase(solucao.begin() + vizinho.iMenor);
+          solucao.erase(solucao.begin() + vizinho.iMenor);
+        } else {
+          solucao.insert(solucao.begin() + vizinho.jMenor, solucao[vizinho.iMenor]);
+          solucao.insert(solucao.begin() + vizinho.jMenor + 1, solucao[vizinho.iMenor + 2]); 
+          solucao.insert(solucao.begin() + vizinho.jMenor + 2, solucao[vizinho.iMenor + 4]); 
+          solucao.erase(solucao.begin() + vizinho.iMenor + 3);
+          solucao.erase(solucao.begin() + vizinho.iMenor + 3);
+          solucao.erase(solucao.begin() + vizinho.iMenor + 3);
+        }
+
+        atualizaSubseq(matrizSubseq, solucao);
+        movimentos = {0, 1, 2, 3, 4};
+
+      } else {
+        movimentos.erase(movimentos.begin() + escolhido);
+      }      
+    }
+  }
+}
+
+vector <int> pertub(vector <int> &solucao){
+
+}
+
 // Função referente à etapa da construção:
 vector <int> construcao(vector <int> listaCandidatos, double valorAleatorio){
   vector <int> solucaoInicial;
@@ -303,46 +467,8 @@ vector <int> construcao(vector <int> listaCandidatos, double valorAleatorio){
         listaCandidatos.erase(listaCandidatos.begin()+j);
     }
   }
-  
+
   return solucaoInicial;
-}
-
-// Função que atualiza valores do custo acumulado e tempo total:
-void atualizaSubseq(vector <vector <subseqInfo>> &matrizSubseq, vector <int> &solucao){
-  int tam = solucao.size();
-
-  // Atualização do tempo total:
-  for(int i = 0; i < tam; i++){
-    for(int j = i; j < tam; j++){
-      if(i == j){
-        matrizSubseq[i][j].tempoTotal = 0;
-      }else {
-        matrizSubseq[i][j].tempoTotal = matrizSubseq[i][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[j]];
-        matrizSubseq[j][i].tempoTotal = matrizSubseq[i][j].tempoTotal;  
-      }
-    }
-  }
-
-  // Atualização do custo acumulado:
-  for(int i = 0; i < tam; i++){
-    for(int j = i; j < tam; j++){ 
-      if(i == j){
-        matrizSubseq[i][j].custoAcumulado = 0;
-      }else {
-        matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j-1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
-      }      
-    }
-  }
-
-  for(int i = tam-1; i >= 0; i--){
-    for(int j = i; j >= 0; j--){ 
-      if(i == j){
-        matrizSubseq[i][j].custoAcumulado = 0;
-      }else{
-        matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j+1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
-      }      
-    }
-  }
 }
 
 // Algoritmo principal:
@@ -350,6 +476,7 @@ double mlp(int iIls, int v){
   vector <int> destinos;
   vector <int> solucao;
   vector <vector <subseqInfo>> matrizSubseq(dimension+1, vector <subseqInfo> (dimension+1));
+  double custoAtual, custo = DBL_MAX;
 
   // Forma vetor com todos os vértices (destinos):
   for(int i = 1; i <= v; i++){
@@ -359,18 +486,29 @@ double mlp(int iIls, int v){
   for(int iterMax = 0; iterMax < 1; iterMax++){
     double valorAleatorio = (rand() % 90) / 100.0 + 0.1;
 
-    solucao = construcao(destinos, valorAleatorio);
-    atualizaSubseq(matrizSubseq, solucao);
+    solucaoAtual = construcao(destinos, valorAleatorio);
+    atualizaSubseq(matrizSubseq, solucaoAtual);
 
-    vector <int> solucaoAtual = solucao;
+    vector <int> solucao = solucaoAtual;
 
     int iterIls = 0;
     while(iterIls < iIls){
+      RVND(solucaoAtual, matrizSubseq);
 
+      custo = matrizSubseq[0][dimension].custoAcumulado;
+
+      if(custoAtual < custo){
+        solucao = solucaoAtual;
+        custo = custoAtual;
+        iterIls = 0;
+      }
+
+      solucaoAtual = pertub(solucao);
+      atualizaSubseq(matrizSubseq, solucaoAtual);
+
+      iterIls++;
     }
-  } 
-
-  
+  }  
 }
 
 int main(int argc, char** argv) {
