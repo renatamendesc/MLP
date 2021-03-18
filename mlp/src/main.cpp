@@ -45,15 +45,15 @@ vizinhoInfo swap(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubs
   for(int i = 1; i < tam-2; i++){
     for(int j = i+1; j < tam-1; j++){
       if(j == i + 1){
-        custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+        custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
         tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
 
         custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i]];
         tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i]];
 
-        custo = custoParcial + ((dimension-j) * (tempoTotal + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+        custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
       }else{
-        custoParcial = matrizSubseq[0][i-1].custoAcumualdo + matrizSubseq.[0][i-1]tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+        custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
         tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
 
         custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i+1]];
@@ -119,8 +119,8 @@ vizinhoInfo reinsertion(vector <int> &solucao, vector <vector <subseqInfo>> & ma
       custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+1][j].custoAcumulado;
       tempoParcial = tempoParcial + matrizSubseq[i+1][j].tempoTotal;
 
-      custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j][solucao[i]];
-      tempoParcial = tempoParcial + matrizAdj[solucao[j][solucao[i]];
+      custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i]];
+      tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i]];
 
       custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
 
@@ -137,7 +137,7 @@ vizinhoInfo reinsertion(vector <int> &solucao, vector <vector <subseqInfo>> & ma
       custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
       tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
 
-      custoParcial = custoParcial + ((i-j) * (tempoParcial + matrizAdj[solucao[i][solucao[j]])) + matrizSubseq[j][i-1].custoAcumulado;
+      custoParcial = custoParcial + ((i-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j]])) + matrizSubseq[j][i-1].custoAcumulado;
       tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[j]] + matrizSubseq[j][i-1].tempoTotal;
 
       custo = custoParcial + ((dimension-i) * (tempoParcial + matrizAdj[solucao[i-1]][solucao[i+1]])) + matrizSubseq[i+1][dimension].custoAcumulado;
@@ -170,8 +170,8 @@ vizinhoInfo oropt2(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
           custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+2][j+1].custoAcumulado;
           tempoParcial = tempoParcial + matrizSubseq[i+2][j+1].tempoTotal;
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j+1][solucao[i]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[j+1][solucao[i]]
+          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j+1]][solucao[i]];
+          tempoParcial = tempoParcial + matrizAdj[solucao[j+1]][solucao[i]];
 
           custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i]][solucao[i+1]];
           tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[i+1]];
@@ -181,11 +181,11 @@ vizinhoInfo oropt2(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
           custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
           tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i][solucao[i+1]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[i][solucao[i+1]];
+          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i]][solucao[i+1]];
+          tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[i+1]];
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i+1][solucao[j]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[i+1][solucao[j]];
+          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i+1]][solucao[j]];
+          tempoParcial = tempoParcial + matrizAdj[solucao[i+1]][solucao[j]];
 
           custoParcial = custoParcial + ((i-j-1) * (tempoParcial)) + matrizSubseq[j][i-1].custoAcumulado;
           tempoParcial = tempoParcial + matrizSubseq[j][i-1].tempoTotal;
@@ -222,8 +222,8 @@ vizinhoInfo oropt3(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
           custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+3][j+2].custoAcumulado;
           tempoParcial = tempoParcial + matrizSubseq[i+3][j+2].tempoTotal;
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j+2][solucao[i]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[j+2][solucao[i]]
+          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j+2]][solucao[i]];
+          tempoParcial = tempoParcial + matrizAdj[solucao[j+2]][solucao[i]];
 
           custoParcial = custoParcial + ((2) * (tempoParcial)) + matrizSubseq[i][i+2].custoAcumulado;
           tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal;
@@ -233,11 +233,11 @@ vizinhoInfo oropt3(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
           custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
           tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
 
-          custoParcial = custoParcial + ((2) * (tempoParcial)) + matrizSubseq[i][i+2].custoAcumualdo;
+          custoParcial = custoParcial + ((2) * (tempoParcial)) + matrizSubseq[i][i+2].custoAcumulado;
           tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal;
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i+2][solucao[j]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[i+2][solucao[j]];
+          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i+2]][solucao[j]];
+          tempoParcial = tempoParcial + matrizAdj[solucao[i+2]][solucao[j]];
 
           custoParcial = custoParcial + ((i-j-1) * (tempoParcial)) + matrizSubseq[j][i-1].custoAcumulado;
           tempoParcial = tempoParcial + matrizSubseq[j][i-1].tempoTotal;
@@ -303,7 +303,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
   while(!movimentos.empty()){
     int escolhido = rand() % movimentos.size();
 
-    if(movimento[escolhido] == 0){
+    if(movimentos[escolhido] == 0){
       vizinho = swap(solucao, matrizSubseq);
 
       //Realiza o movimento:
@@ -418,8 +418,71 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
   }
 }
 
-vector <int> pertub(vector <int> &solucao){
+vector <int> pertub(vector <int> &solucaoInicial){
+  vector <int> solucao = solucaoInicial;
+  int i, j, tam1, tam2, tam = solucao.size();
 
+  // Gera tamanho das subsequencias:
+  if(tam < 20){
+    tam1 = 2;
+		tam2 = 2;
+  }else{
+    tam1 = rand() % ((tam/10)-(2)+1) + 2;
+    tam2 = rand() % ((tam/10)-(2)+1) + 2;
+  }
+
+  //Gera posição incial da subsequencia 1:
+  i = rand() % ((tam-tam1-1)-(1)+1) + 1;
+
+	j = rand() % ((tam-tam2-1)-(1)+1) + 1;
+  while((j > (i - tam2) && j < (i + tam1))){
+		j = rand() % ((tam-tam2-1)-(1)+1) + 1;
+	}
+
+  if(i < j){
+  // Insere primeira subsequencia:
+    for(int k = 0; k < tam1; k++){
+      solucao.insert(solucao.begin()+j+k, solucaoInicial[i+k]);
+    }
+
+    // Apaga primeira subsequencia:
+    for(int k = 0; k < tam1; k++){
+      solucao.erase(solucao.begin()+i);
+    }
+
+    // Apaga segunda subsequencia:
+    for(int k = 0; k < tam2; k++){
+      solucao.erase(solucao.begin()+j);
+    }
+
+    // Insere segunda subsequencia:
+    for(int k = 0; k < tam2; k++){
+      solucao.insert(solucao.begin()+i+k, solucaoInicial[j+k]);
+    }
+
+    }else{
+    // Insere segunda subsequencia:
+    for(int k = 0; k < tam2; k++){
+      solucao.insert(solucao.begin()+i+k, solucaoInicial[j+k]);
+    }
+
+    // Apaga segunda subsequencia:
+    for(int k = 0; k < tam2; k++){
+      solucao.erase(solucao.begin()+j);
+    }
+
+    // Apaga primeira subsequencia:
+    for(int k = 0; k < tam1; k++){
+      solucao.erase(solucao.begin()+i);
+    }
+
+    // Insere primeira subsequencia:
+    for(int k = 0; k < tam1; k++){
+      solucao.insert(solucao.begin()+j+k, solucaoInicial[i+k]);
+    }
+  }
+
+  return solucao;
 }
 
 // Função referente à etapa da construção:
@@ -473,10 +536,9 @@ vector <int> construcao(vector <int> listaCandidatos, double valorAleatorio){
 
 // Algoritmo principal:
 double mlp(int iIls, int v){
-  vector <int> destinos;
-  vector <int> solucao;
+  double custo = DBL_MAX, custoAtual, custoFinal = DBL_MAX;
+  vector <int> destinos, solucao, solucaoAtual, solucaoFinal;
   vector <vector <subseqInfo>> matrizSubseq(dimension+1, vector <subseqInfo> (dimension+1));
-  double custoAtual, custo = DBL_MAX;
 
   // Forma vetor com todos os vértices (destinos):
   for(int i = 1; i <= v; i++){
@@ -489,13 +551,13 @@ double mlp(int iIls, int v){
     solucaoAtual = construcao(destinos, valorAleatorio);
     atualizaSubseq(matrizSubseq, solucaoAtual);
 
-    vector <int> solucao = solucaoAtual;
+    solucao = solucaoAtual;
 
     int iterIls = 0;
     while(iterIls < iIls){
       RVND(solucaoAtual, matrizSubseq);
 
-      custo = matrizSubseq[0][dimension].custoAcumulado;
+      custoAtual = matrizSubseq[0][dimension].custoAcumulado;
 
       if(custoAtual < custo){
         solucao = solucaoAtual;
@@ -508,7 +570,14 @@ double mlp(int iIls, int v){
 
       iterIls++;
     }
-  }  
+
+    if(custo < custoFinal){
+      solucaoFinal = solucao;
+      custoFinal = custo;
+    }
+  }
+
+  return custoFinal;  
 }
 
 int main(int argc, char** argv) {
