@@ -285,7 +285,7 @@ void atualizaSubseq(vector <vector <subseqInfo>> &matrizSubseq, vector <int> &so
   }
 
   for(int i = tam-1; i >= 0; i--){
-    for(int j = i; j >= 0; j--){ 
+    for(int j = i; j >= 0; j--){
       if(i == j){
         matrizSubseq[i][j].custoAcumulado = 0;
       }else{
@@ -505,6 +505,7 @@ vector <int> construcao(vector <int> listaCandidatos, double valorAleatorio){
 
   while(!listaCandidatos.empty()){
     vector <insercaoInfo> custoInsercao((solucaoInicial.size()-1) * listaCandidatos.size());
+
     for(int j = 0, l = 1, q = 0; j < solucaoInicial.size()-1; j++, l++){
       for(auto k : listaCandidatos){
         custoInsercao[q].custo = matrizAdj[solucaoInicial[j]][k] + matrizAdj[solucaoInicial[l]][k] - matrizAdj[solucaoInicial[j]][solucaoInicial[l]];
@@ -540,12 +541,12 @@ double mlp(int iIls, int v){
   vector <int> destinos, solucao, solucaoAtual, solucaoFinal;
   vector <vector <subseqInfo>> matrizSubseq(dimension+1, vector <subseqInfo> (dimension+1));
 
-  // Forma vetor com todos os vértices (destinos):
+  // Forma vector com todos os vértices (destinos):
   for(int i = 1; i <= v; i++){
     destinos.push_back(i);
   }
 
-  for(int iterMax = 0; iterMax < 1; iterMax++){
+  for(int iterMax = 0; iterMax < 50; iterMax++){
     double valorAleatorio = (rand() % 90) / 100.0 + 0.1;
 
     solucaoAtual = construcao(destinos, valorAleatorio);
