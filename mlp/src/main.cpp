@@ -105,7 +105,7 @@ vizinhoInfo twoOpt(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSu
 }
 
 // Estrutura de vizinhança reinsertion:
-vizinhoInfo reinsertion(vector <int> &solucao, vector <vector <subseqInfo>> & matrizSubseq){
+vizinhoInfo reinsertion(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
   double custoParcial, custo, tempoParcial;
   int tam = solucao.size();
   vizinhoInfo melhorVizinho;
@@ -303,6 +303,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
   while(!movimentos.empty()){
     int escolhido = rand() % movimentos.size();
 
+    // Realiza o movimento:
     if(movimentos[escolhido] == 0){
       vizinho = swap(solucao, matrizSubseq);
 
@@ -313,6 +314,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 	      solucao[vizinho.iMenor] = solucao[vizinho.jMenor];
 	      solucao[vizinho.jMenor] = aux;
 
+        // Atualiza a matriz de subsequências com a nova solução:
         atualizaSubseq(matrizSubseq, solucao);
         movimentos = {0, 1, 2, 3, 4};
 
@@ -324,12 +326,14 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 
       vizinho = reinsertion(solucao, matrizSubseq);
 
+      // Realiza o movimento:
       if(vizinho.custoMenor < 0){
         vector <int> solucaoInicial = solucao;
 
         solucao.erase(solucao.begin()+vizinho.iMenor);
         solucao.insert(solucao.begin()+vizinho.jMenor, solucaoInicial[vizinho.iMenor]);
 
+        // Atualiza a matriz de subsequências com a nova solução:
         atualizaSubseq(matrizSubseq, solucao);
         movimentos = {0, 1, 2, 3, 4};
 
@@ -341,6 +345,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 
       vizinho = twoOpt(solucao, matrizSubseq);
 
+      // Realiza o movimento:
       if(vizinho.custoMenor < 0){
         int aux, k = vizinho.jMenor - vizinho.iMenor;
 
@@ -354,6 +359,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
           solucao[vizinho.jMenor-q] = aux;
         }
 
+        // Atualiza a matriz de subsequências com a nova solução:
         atualizaSubseq(matrizSubseq, solucao);
         movimentos = {0, 1, 2, 3, 4};
 
@@ -365,7 +371,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 
       vizinho = oropt2(solucao, matrizSubseq);
 
-      //Realiza o movimento:
+      // Realiza o movimento:
       if(vizinho.custoMenor < 0){
         if(vizinho.iMenor < vizinho.jMenor){
           solucao.insert(solucao.begin() + vizinho.jMenor + 2, solucao[vizinho.iMenor]); 
@@ -379,6 +385,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
           solucao.erase(solucao.begin() + vizinho.iMenor + 2);
         }
 
+        // Atualiza a matriz de subsequências com a nova solução:
         atualizaSubseq(matrizSubseq, solucao);
         movimentos = {0, 1, 2, 3, 4};
 
@@ -408,6 +415,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
           solucao.erase(solucao.begin() + vizinho.iMenor + 3);
         }
 
+        // Atualiza a matriz de subsequências com a nova solução:
         atualizaSubseq(matrizSubseq, solucao);
         movimentos = {0, 1, 2, 3, 4};
 
