@@ -308,7 +308,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
       vizinho = swap(solucao, matrizSubseq);
 
       //Realiza o movimento:
-      if(vizinho.custoMenor < 0){
+      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
 
         int aux = solucao[vizinho.iMenor];
 	      solucao[vizinho.iMenor] = solucao[vizinho.jMenor];
@@ -327,7 +327,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
       vizinho = reinsertion(solucao, matrizSubseq);
 
       // Realiza o movimento:
-      if(vizinho.custoMenor < 0){
+      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
         vector <int> solucaoInicial = solucao;
 
         solucao.erase(solucao.begin()+vizinho.iMenor);
@@ -346,7 +346,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
       vizinho = twoOpt(solucao, matrizSubseq);
 
       // Realiza o movimento:
-      if(vizinho.custoMenor < 0){
+      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
         int aux, k = vizinho.jMenor - vizinho.iMenor;
 
         if(k % 2 != 0){
@@ -372,7 +372,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
       vizinho = oropt2(solucao, matrizSubseq);
 
       // Realiza o movimento:
-      if(vizinho.custoMenor < 0){
+      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
         if(vizinho.iMenor < vizinho.jMenor){
           solucao.insert(solucao.begin() + vizinho.jMenor + 2, solucao[vizinho.iMenor]); 
           solucao.insert(solucao.begin() + vizinho.jMenor + 3, solucao[vizinho.iMenor+1]); 
@@ -398,7 +398,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
       vizinho = oropt3(solucao, matrizSubseq);
 
       //Realiza o movimento:
-      if(vizinho.custoMenor < 0){
+      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
         if(vizinho.iMenor < vizinho.jMenor){
           solucao.insert(solucao.begin() + vizinho.jMenor + 3, solucao[vizinho.iMenor]);
           solucao.insert(solucao.begin() + vizinho.jMenor + 4, solucao[vizinho.iMenor+1]); 
@@ -554,7 +554,7 @@ double mlp(int iIls, int v){
     destinos.push_back(i);
   }
 
-  for(int iterMax = 0; iterMax < 50; iterMax++){
+  for(int iterMax = 0; iterMax < 10; iterMax++){
     double valorAleatorio = (rand() % 90) / 100.0 + 0.1;
 
     solucaoAtual = construcao(destinos, valorAleatorio);
@@ -585,6 +585,13 @@ double mlp(int iIls, int v){
       custoFinal = custo;
     }
   }
+
+  cout << "Solução: ";
+  for(int i = 0; i < solucaoFinal.size(); i++){
+    cout << solucaoFinal[i] << " ";
+  }
+
+  cout << endl;
 
   return custoFinal;  
 }
