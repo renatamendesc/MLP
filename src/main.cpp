@@ -318,8 +318,9 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
         atualizaSubseq(matrizSubseq, solucao);
         movimentos = {0, 1, 2, 3, 4};
 
-      }else {
+      } else {
         movimentos.erase(movimentos.begin() + escolhido);
+
       }
 
     }else if(movimentos[escolhido] == 1){
@@ -337,8 +338,9 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
         atualizaSubseq(matrizSubseq, solucao);
         movimentos = {0, 1, 2, 3, 4};
 
-      }else {
+      } else {
         movimentos.erase(movimentos.begin() + escolhido);
+
       }
 
     }else if(movimentos[escolhido] == 2){
@@ -347,6 +349,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 
       // Realiza o movimento:
       if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
+
         int aux, k = vizinho.jMenor - vizinho.iMenor;
 
         if(k % 2 != 0){
@@ -365,6 +368,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 
       } else {
         movimentos.erase(movimentos.begin() + escolhido);
+
       }
 
     }else if(movimentos[escolhido] == 3){
@@ -373,6 +377,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 
       // Realiza o movimento:
       if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
+
         if(vizinho.iMenor < vizinho.jMenor){
           solucao.insert(solucao.begin() + vizinho.jMenor + 2, solucao[vizinho.iMenor]); 
           solucao.insert(solucao.begin() + vizinho.jMenor + 3, solucao[vizinho.iMenor+1]); 
@@ -399,6 +404,7 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 
       //Realiza o movimento:
       if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
+
         if(vizinho.iMenor < vizinho.jMenor){
           solucao.insert(solucao.begin() + vizinho.jMenor + 3, solucao[vizinho.iMenor]);
           solucao.insert(solucao.begin() + vizinho.jMenor + 4, solucao[vizinho.iMenor+1]); 
@@ -421,76 +427,154 @@ void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
 
       } else {
         movimentos.erase(movimentos.begin() + escolhido);
+
       }      
     }
   }
 }
 
-vector <int> pertub(vector <int> &solucaoInicial){
-  vector <int> solucao = solucaoInicial;
-  int i, j, tam1, tam2, tam = solucao.size();
-
-  // Gera tamanho das subsequencias:
-  if(tam < 20){
-    tam1 = 2;
+vector <int> pertub(vector <int> &solucao){
+  vector <int> solucaoModificada;
+	vector <int> subsequencia1;
+	vector <int> subsequencia2;
+	int i, j, tam1 = 0, tam2 = 0, tam = solucao.size();
+	
+	//Gera tamanho das subsequencias:
+	if(tam < 20){
+		tam1 = 2;
 		tam2 = 2;
-  }else{
-    tam1 = rand() % ((tam/10)-(2)+1) + 2;
-    tam2 = rand() % ((tam/10)-(2)+1) + 2;
+
+	} else {
+
+		while(tam1 < 2 || tam1 > (tam/10)){
+			tam1 = rand() % tam;
+		}
+
+		while(tam2 < 2 || tam2 > (tam/10)){
+			tam2 = rand() % tam;
+		}
+
+	}
+	
+	//Gera posição incial da subsequencia 1:
+	i = rand() % (tam - tam1);
+  while(i == 0){
+      i = rand() % (tam - tam1);
   }
 
-  //Gera posição incial da subsequencia 1:
-  i = rand() % ((tam-tam1-1)-(1)+1) + 1;
-
-	j = rand() % ((tam-tam2-1)-(1)+1) + 1;
-  while((j > (i - tam2) && j < (i + tam1))){
-		j = rand() % ((tam-tam2-1)-(1)+1) + 1;
+	//Gera posição incial da subsequencia 2:
+	j = rand() % (tam - tam2);
+	while((j > (i - tam2) && j < (i + tam1)) || j == 0){
+		j = rand() % (tam - tam2);
 	}
 
-  if(i < j){
-  // Insere primeira subsequencia:
-    for(int k = 0; k < tam1; k++){
-      solucao.insert(solucao.begin()+j+k, solucaoInicial[i+k]);
+	//Cria um vetor da subsequencia 1:
+	int contadorIteracoes = 0;
+	for(int q = 0; q < tam; q++){
+		if(q >= i){
+			subsequencia1.push_back(solucao[q]);
+      contadorIteracoes++;
+			if(contadorIteracoes == tam1){
+				break;
+			}
+		}
+	}
+	
+	//Cria um vetor da subsequencia 2:
+	contadorIteracoes = 0;
+	for(int q = 0; q < tam; q++){
+		if(q >= j){
+			subsequencia2.push_back(solucao[q]);
+      contadorIteracoes++;
+			if(contadorIteracoes == tam2){
+				break;
+			}
+		}
+	}
+
+	if(j < i){	
+    //Apaga subsequencia 1:
+    solucaoModificada = solucao;
+    int apagados = 0;
+    for(int q = 0; q < tam; q++){
+      if(q >= i){
+        solucaoModificada.erase(solucaoModificada.begin() + q - apagados);
+        apagados++;
+        if(apagados == tam1){
+          break;
+        }
+      }
     }
 
-    // Apaga primeira subsequencia:
-    for(int k = 0; k < tam1; k++){
-      solucao.erase(solucao.begin()+i);
+    //Apaga subsequencia 2:
+    apagados = 0;
+    for(int q = 0; q < tam; q++){
+      if(q >= j){
+        solucaoModificada.erase(solucaoModificada.begin() + q - apagados);
+        apagados++;
+        if(apagados == tam2){
+          break;
+        }
+      }
     }
 
-    // Apaga segunda subsequencia:
-    for(int k = 0; k < tam2; k++){
-      solucao.erase(solucao.begin()+j);
+    //Insere subsequencia 2 no lugar da 1:
+    int colocados = 0;
+    for(int q = 0; q < subsequencia2.size(); q++){
+      solucaoModificada.insert(solucaoModificada.begin() + i + colocados - tam2, subsequencia2[q]);
+      colocados++;
+    }
+        
+    //Insere subsequencia 1 no lugar da 2:
+    colocados = 0;
+    for(int q = 0; q < subsequencia1.size(); q++){
+      solucaoModificada.insert(solucaoModificada.begin() + j + colocados, subsequencia1[q]);
+      colocados++;
+    }
+      
+	} else {
+
+    //Apaga subsequencia 1:
+    solucaoModificada = solucao;
+    int apagados = 0;
+    for(int q = 0; q < tam; q++){
+      if(q >= j){
+        solucaoModificada.erase(solucaoModificada.begin() + q - apagados);
+        apagados++;
+        if(apagados == tam2){
+          break;
+        }
+      }
     }
 
-    // Insere segunda subsequencia:
-    for(int k = 0; k < tam2; k++){
-      solucao.insert(solucao.begin()+i+k, solucaoInicial[j+k]);
-    }
+    //Apaga subsequencia 2:
+    apagados = 0;
+    for(int q = 0; q < tam; q++){
+      if(q >= i){
+        solucaoModificada.erase(solucaoModificada.begin() + q - apagados);
+        apagados++;
+        if(apagados == tam1){
+          break;
+        }
+      }
+	  }
 
-    }else{
-    // Insere segunda subsequencia:
-    for(int k = 0; k < tam2; k++){
-      solucao.insert(solucao.begin()+i+k, solucaoInicial[j+k]);
+    //Insere subsequencia 1 no lugar da 2:
+    int colocados = 0;
+    for(int q = 0; q < subsequencia1.size(); q++){
+      solucaoModificada.insert(solucaoModificada.begin() + j + colocados - tam1, subsequencia1[q]);
+      colocados++;
     }
-
-    // Apaga segunda subsequencia:
-    for(int k = 0; k < tam2; k++){
-      solucao.erase(solucao.begin()+j);
-    }
-
-    // Apaga primeira subsequencia:
-    for(int k = 0; k < tam1; k++){
-      solucao.erase(solucao.begin()+i);
-    }
-
-    // Insere primeira subsequencia:
-    for(int k = 0; k < tam1; k++){
-      solucao.insert(solucao.begin()+j+k, solucaoInicial[i+k]);
+        
+    //Insere subsequencia 2 no lugar da 1:
+    colocados = 0;
+    for(int q = 0; q < subsequencia2.size(); q++){
+      solucaoModificada.insert(solucaoModificada.begin() + i + colocados, subsequencia2[q]);
+      colocados++;
     }
   }
-
-  return solucao;
+		
+  return solucaoModificada;
 }
 
 // Função referente à etapa da construção:
@@ -544,13 +628,13 @@ vector <int> construcao(vector <int> listaCandidatos, double valorAleatorio){
 }
 
 // Algoritmo principal:
-double mlp(int iIls, int v){
+double mlp(int iIls, int vertices){
   double custo = DBL_MAX, custoAtual, custoFinal = DBL_MAX;
   vector <int> destinos, solucao, solucaoAtual, solucaoFinal;
   vector <vector <subseqInfo>> matrizSubseq(dimension+1, vector <subseqInfo> (dimension+1));
 
   // Forma vector com todos os vértices (destinos):
-  for(int i = 1; i <= v; i++){
+  for(int i = 1; i <= vertices; i++){
     destinos.push_back(i);
   }
 
@@ -605,8 +689,8 @@ int main(int argc, char** argv) {
 
   int iIls;
     
-  if(dimension >= 150){
-    iIls = dimension/2;
+  if(dimension > 100){
+    iIls = 100;
   } else {
     iIls = dimension;
   }
