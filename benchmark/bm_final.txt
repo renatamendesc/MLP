@@ -1,0 +1,96 @@
+instances/att48.tsp
+Custo: 209320.000000
+Tempo: 0.273225
+
+instances/berlin52.tsp
+Custo: 143721.000000
+Tempo: 0.396498
+
+instances/brazil58.tsp
+Custo: 512361.000000
+Tempo: 0.628353
+
+instances/burma14.tsp
+Custo: 20315.000000
+Tempo: 0.002237
+
+instances/dantzig42.tsp
+Custo: 12528.000000
+Tempo: 0.171210
+
+instances/eil101.tsp
+Custo: 27590.400000
+Tempo: 6.349308
+
+instances/eil51.tsp
+Custo: 10178.000000
+Tempo: 0.365919
+
+instances/eil76.tsp
+Custo: 17982.700000
+Tempo: 1.893654
+
+instances/gr48.tsp
+Custo: 102378.000000
+Tempo: 0.287762
+
+instances/gr96.tsp
+Custo: 2097170.000000
+Tempo: 5.693263
+
+instances/hk48.tsp
+Custo: 247926.000000
+Tempo: 0.370201
+
+instances/kroA100.tsp
+Custo: 983128.000000
+Tempo: 6.422657
+
+instances/kroB100.tsp
+Custo: 986008.000000
+Tempo: 6.126251
+
+instances/kroC100.tsp
+Custo: 961324.000000
+Tempo: 6.184623
+
+instances/kroD100.tsp
+Custo: 976965.000000
+Tempo: 6.104159
+
+instances/kroE100.tsp
+Custo: 971266.000000
+Tempo: 6.252905
+
+instances/lin105.tsp
+Custo: 603910.000000
+Tempo: 7.474107
+
+instances/pr107.tsp
+Custo: 2026630.000000
+Tempo: 7.593902
+
+instances/pr76.tsp
+Custo: 3455240.000000
+Tempo: 1.921662
+
+instances/rat99.tsp
+Custo: 58049.300000
+Tempo: 5.781683
+
+instances/rd100.tsp
+Custo: 340178.800000
+Tempo: 6.105933
+
+instances/st70.tsp
+Custo: 20557.000000
+Tempo: 1.331593
+
+instances/swiss42.tsp
+Custo: 22327.000000
+Tempo: 0.169564
+
+-
+Custo: 22327.000000
+Tempo: 0.175180
+
