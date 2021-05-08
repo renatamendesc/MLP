@@ -701,7 +701,7 @@ int main(int argc, char** argv) {
   clock_t fim = clock();
   double tempo = ((double) (fim - inicio)) / CLOCKS_PER_SEC;
 
-  cout << "Custo acumulado: " << custoAcumuladoFinal << endl;
+  cout << "Custo: " << custoAcumuladoFinal << endl;
   cout << "Tempo: " << tempo << endl;
     
   return 0;
