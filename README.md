@@ -17,4 +17,4 @@ Para executar o programa, primeiramente, deve-se abrir o terminal na pasta do pr
 **Obs:** Os comandos descritos acima correspondem ao terminal do Linux. Eles podem variar com base no sistema operacional utilizado.
 
 ## Resultados:
-Uma vez implementado corretamente, soluções ótimas conhecidas são obtidas rapidamente para instâncias com até 107 vértices. Todos os resultados da execução do programa foram registrados na pasta [benchmark](https://github.com/renatamendesc/MLP/blob/main/benchmark/bm_final.txt).
+Uma vez implementado corretamente, soluções ótimas conhecidas são obtidas rapidamente para instâncias com até 107 destinos. Todos os resultados da execução do programa foram registrados na pasta [benchmark](https://github.com/renatamendesc/MLP/blob/main/benchmark/bm_final.txt).
