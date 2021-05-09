@@ -4,7 +4,7 @@ O Minimum Latency Problem (MLP), também conhecido como Problema da Mínima Lat�
 
 ## Meta-heurísticas:
 
-Para casos onde o número de destinos que se deseja visitar é muito grande, faz-se necessário o uso de uma meta-heurística para resolver a situação, que não garante a melhor solução de todas, porém, no geral, retorna soluções satisfatórias. Caso contrário, o computador não é capaz de determinar a resposta ótima em um tempo viável. Sendo assim, na resolução do problema foi utilizado a meta-heurística **GILS-RVND**, que une componentes das heurísticas GRASP *(Greedy Randomized Adaptive Search Procedure)*, ILS *(Iterated Local Search)* e RVND *(Randomized Variable Neighborhood Descent)*.
+Para casos onde o número de destinos que se deseja percorrer é muito grande, faz-se necessário o uso de uma meta-heurística para resolver a situação, que não garante a melhor solução de todas, porém, no geral, retorna soluções satisfatórias. Caso contrário, o computador não é capaz de determinar a resposta ótima em um tempo viável. Sendo assim, na resolução do problema foi utilizado a meta-heurística **GILS-RVND**, que une componentes das heurísticas GRASP *(Greedy Randomized Adaptive Search Procedure)*, ILS *(Iterated Local Search)* e RVND *(Randomized Variable Neighborhood Descent)*.
 
 ## Rodando o programa:
 
