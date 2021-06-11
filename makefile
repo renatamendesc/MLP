@@ -24,7 +24,7 @@ OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 #############################
 
 #### regra principal, gera o executavel
-tsp: $(OBJS) 
+mlp: $(OBJS) 
 	@echo  "\033[31m \nLinking all objects files: \033[0m"
 	$(CPPC) $(BITS_OPTION) $(OBJS) -o $@ $(CCLNFLAGS)
 ############################
@@ -46,7 +46,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 #delete objetos e arquivos de dependencia
 clean:
 	@echo "\033[31mcleaning obj directory \033[0m"
-	@rm tsp -f $(OBJDIR)/*.o $(OBJDIR)/*.d
+	@rm mlp -f $(OBJDIR)/*.o $(OBJDIR)/*.d
 
 
 rebuild: clean tsp
