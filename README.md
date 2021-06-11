@@ -10,7 +10,7 @@ Para casos onde o número de destinos que se deseja percorrer é muito grande, f
 
 Para executar o programa, primeiramente, deve-se abrir o terminal na pasta do projeto e compilar, utilizando o comando `make`. Dessa forma, será gerado o arquivo executável. Por fim, basta digitar:
 
-```./tsp instances/(DIGITE UMA INSTÂNCIA)```
+```./mlp instances/(DIGITE UMA INSTÂNCIA)```
 
 É importante deixar claro que a instância escolhida deve estar presente na pasta [instances](https://github.com/renatamendesc/MLP/tree/main/instances).
 
