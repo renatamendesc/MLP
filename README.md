@@ -10,11 +10,9 @@ Para casos onde o número de destinos que se deseja percorrer é muito grande, f
 
 Para executar o programa, primeiramente, deve-se abrir o terminal na pasta do projeto e compilar, utilizando o comando `make`. Dessa forma, será gerado o arquivo executável. Por fim, basta digitar:
 
-```./mlp instances/(DIGITE UMA INSTÂNCIA)```
+```./mlp instances/(INSTÂNCIA)```
 
 É importante deixar claro que a instância escolhida deve estar presente na pasta [instances](https://github.com/renatamendesc/MLP/tree/main/instances).
-
-**Obs:** Os comandos descritos acima correspondem ao terminal do Linux. Eles podem variar com base no sistema operacional utilizado.
 
 ## Resultados:
 Uma vez implementado corretamente, soluções ótimas conhecidas são obtidas rapidamente para instâncias com até 107 destinos. Todos os resultados da execução do programa foram registrados na pasta [benchmark](https://github.com/renatamendesc/MLP/blob/main/benchmark/bm_final.txt).
