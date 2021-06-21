@@ -1,18 +1,17 @@
 # Minimum Latency Problem (MLP)
 
-O Minimum Latency Problem (MLP), também conhecido como Problema da Mínima Latência, se trata de uma variante do clássiso problema de otimização combinatória, [TSP](https://github.com/renatamendesc/TSP). Esse problema consiste em minimizar a **soma dos tempos** de chegada em **todos** os destinos, encontrando o percuso de menor custo acumulado.
+The Minimum Latency Problem (MLP) is a variant of the traditional optimization problem [TSP](https://github.com/renatamendesc/TSP), which aims to minimize the sum of arrival times at all vertices.
 
-## Meta-heurísticas:
+## Metaheuristics
+For instances which the number of vertices that we need to cover is very big, it's necessary the use of a metaheuristic to solve the issue, which doesn't guarantee the optimal solution, but in general results on good anwsers, otherwise, the computer can't give the optimal solution in a feasible time. Therefore, it was used the metaheuristic **GILS-RVND**, which combines components of Greedy Randomized Adaptive Search Procedure (GRASP), Iterated Local Search (ILS) and Variable Neighborhood Descent with Random neighborhood ordering (RVND).
 
-Para casos onde o número de destinos que se deseja percorrer é muito grande, faz-se necessário o uso de uma meta-heurística para resolver a situação, que não garante a melhor solução de todas, porém, no geral, retorna soluções satisfatórias. Caso contrário, o computador não é capaz de determinar a resposta ótima em um tempo viável. Sendo assim, na resolução do problema foi utilizado a meta-heurística **GILS-RVND**, que une componentes das heurísticas GRASP *(Greedy Randomized Adaptive Search Procedure)*, ILS *(Iterated Local Search)* e RVND *(Randomized Variable Neighborhood Descent)*.
+## Running
 
-## Rodando o programa:
+To execute the program you just have to open your terminal and type the following command:
 
-Para executar o programa, primeiramente, deve-se abrir o terminal na pasta do projeto e compilar, utilizando o comando `make`. Dessa forma, será gerado o arquivo executável. Por fim, basta digitar:
+```./mlp instances/(INSTANCE)```
 
-```./mlp instances/(INSTÂNCIA)```
+The instance that you choose must exist on the folder [instances](https://github.com/renatamendesc/MLP/tree/main/instances).
 
-É importante deixar claro que a instância escolhida deve estar presente na pasta [instances](https://github.com/renatamendesc/MLP/tree/main/instances).
-
-## Resultados:
-Uma vez implementado corretamente, soluções ótimas conhecidas são obtidas rapidamente para instâncias com até 107 destinos. Todos os resultados da execução do programa foram registrados na pasta [benchmark](https://github.com/renatamendesc/MLP/blob/main/benchmark/bm_final.txt).
+## Results
+Once implemented correctly, optimal solutions to instances with up to 107 customers are obtained in a few seconds. All the execution results were registered on the  folder [benchmark](https://github.com/renatamendesc/MLP/blob/main/benchmark/bm_final.txt).
