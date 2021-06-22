@@ -8,278 +8,275 @@
 
 using namespace std;
 
-double ** matrizAdj; 
+double ** distanceMatrix; 
 int dimension; 
 
-struct insercaoInfo{
-  int noInserido;
-  int deslocado; 
-  double custo;
+struct insertionInfo{
+  int insertedNode;
+  int deletedEdge; 
+  double cost;
 };
 
-struct vizinhoInfo{
-  int iMenor;
-  int jMenor;
-  double custoMenor;
+struct neighborInfo{
+  int iBest;
+  int jBest;
+  double bestCost;
 };
 
-struct subseqInfo{
-  double tempoTotal;
-  double custoAcumulado;
+struct subsequenceInfo{
+  double totalTime;
+  double acumulateCost;
   double vertices;
 };
 
-
-// Função de comparação utilizada para ordenar o vetor na construção:
-bool comparacao(insercaoInfo a, insercaoInfo b){
-  return a.custo < b.custo;
+bool compares(insertionInfo a, insertionInfo b){
+  return a.cost < b.cost;
 }
 
-// Estrutura de vizinhança swap:
-vizinhoInfo swap(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
-  double custoParcial, custo, tempoParcial;
-  int tam = solucao.size();
-  vizinhoInfo melhorVizinho;
-  melhorVizinho.custoMenor = DBL_MAX;
+neighborInfo swap(vector <int> &solution, vector <vector <subsequenceInfo>> &subsequenceMatrix){
+  double partialCost, cost, partialTime;
+  int size = solution.size();
 
-  for(int i = 1; i < tam-2; i++){
-    for(int j = i+1; j < tam-1; j++){
+  neighborInfo bestNeighbor;
+  bestNeighbor.bestCost = DBL_MAX;
+
+  for(int i = 1; i < size-2; i++){
+    for(int j = i+1; j < size-1; j++){
       if(j == i + 1){
-        custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
-        tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+        partialCost = subsequenceMatrix[0][i-1].acumulateCost + subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[j]];
+        partialTime = subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[j]];
 
-        custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i]];
-        tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i]];
+        partialCost = partialCost + partialTime + distanceMatrix[solution[j]][solution[i]];
+        partialTime = partialTime + distanceMatrix[solution[j]][solution[i]];
 
-        custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+        cost = partialCost + ((dimension-j) * (partialTime + distanceMatrix[solution[i]][solution[j+1]])) + subsequenceMatrix[j+1][dimension].acumulateCost;
       }else{
-        custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
-        tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]];
+        partialCost = subsequenceMatrix[0][i-1].acumulateCost + subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[j]];
+        partialTime = subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[j]];
 
-        custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i+1]];
-        tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i+1]];
+        partialCost = partialCost + partialTime + distanceMatrix[solution[j]][solution[i+1]];
+        partialTime = partialTime + distanceMatrix[solution[j]][solution[i+1]];
 
-        custoParcial = custoParcial + ((j-i-2) * (tempoParcial)) + matrizSubseq[i+1][j-1].custoAcumulado;
-        tempoParcial = tempoParcial + matrizSubseq[i+1][j-1].tempoTotal;
+        partialCost = partialCost + ((j-i-2) * (partialTime)) + subsequenceMatrix[i+1][j-1].acumulateCost;
+        partialTime = partialTime + subsequenceMatrix[i+1][j-1].totalTime;
 
-        custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
-        tempoParcial = tempoParcial + matrizAdj[solucao[j-1]][solucao[i]];
+        partialCost = partialCost + partialTime + distanceMatrix[solution[j-1]][solution[i]];
+        partialTime = partialTime + distanceMatrix[solution[j-1]][solution[i]];
 
-        custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+        cost = partialCost + ((dimension-j) * (partialTime + distanceMatrix[solution[i]][solution[j+1]])) + subsequenceMatrix[j+1][dimension].acumulateCost;
       }
 
-      if(custo < melhorVizinho.custoMenor){    
-        melhorVizinho.iMenor = i;
-        melhorVizinho.jMenor = j;
-        melhorVizinho.custoMenor = custo;
+      if(cost < bestNeighbor.bestCost){    
+        bestNeighbor.iBest = i;
+        bestNeighbor.jBest = j;
+        bestNeighbor.bestCost = cost;
 	    } 
     }
   }
 
-  return melhorVizinho;
+  return bestNeighbor;
 }
 
-// Estrutura de vizinhança 2-opt:
-vizinhoInfo twoOpt(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
-  double custoParcial, custo, tempoParcial;
-  int tam = solucao.size();
-  vizinhoInfo melhorVizinho;
-  melhorVizinho.custoMenor = DBL_MAX;
+neighborInfo twoOpt(vector <int> &solution, vector <vector <subsequenceInfo>> &subsequenceMatrix){
+  double partialCost, cost, partialTime;
+  int size = solution.size();
 
-  for(int i = 1; i < tam; i++){
-    for(int j = i+1; j < tam-1; j++){
-      custoParcial = matrizSubseq[0][i-1].custoAcumulado + ((j-i+1) * (matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]])) + matrizSubseq[j][i].custoAcumulado;
-      tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[j]] + matrizSubseq[j][i].tempoTotal;
+  neighborInfo bestNeighbor;
+  bestNeighbor.bestCost = DBL_MAX;
 
-      custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]]) + matrizSubseq[j+1][dimension].custoAcumulado);
+  for(int i = 1; i < size; i++){
+    for(int j = i+1; j < size-1; j++){
+      partialCost = subsequenceMatrix[0][i-1].acumulateCost + ((j-i+1) * (subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[j]])) + subsequenceMatrix[j][i].acumulateCost;
+      partialTime = subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[j]] + subsequenceMatrix[j][i].totalTime;
 
-      if(custo < melhorVizinho.custoMenor){    
-        melhorVizinho.iMenor = i;
-        melhorVizinho.jMenor = j;
-        melhorVizinho.custoMenor = custo;
+      cost = partialCost + ((dimension-j) * (partialTime + distanceMatrix[solution[i]][solution[j+1]]) + subsequenceMatrix[j+1][dimension].acumulateCost);
+
+      if(cost < bestNeighbor.bestCost){    
+        bestNeighbor.iBest = i;
+        bestNeighbor.jBest = j;
+        bestNeighbor.bestCost = cost;
 	    } 
     }
   }
 
-  return melhorVizinho;
+  return bestNeighbor;
 }
 
-// Estrutura de vizinhança reinsertion:
-vizinhoInfo reinsertion(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
-  double custoParcial, custo, tempoParcial;
-  int tam = solucao.size();
-  vizinhoInfo melhorVizinho;
-  melhorVizinho.custoMenor = DBL_MAX;
+neighborInfo reinsertion(vector <int> &solution, vector <vector <subsequenceInfo>> &subsequenceMatrix){
+  double partialCost, cost, partialTime;
+  int size = solution.size();
 
-  for(int i = 1; i < tam-2; i++){
-    for(int j = i + 1; j < tam-1; j++){
-      custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+1]];
-      tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+1]];
+  neighborInfo bestNeighbor;
+  bestNeighbor.bestCost = DBL_MAX;
 
-      custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+1][j].custoAcumulado;
-      tempoParcial = tempoParcial + matrizSubseq[i+1][j].tempoTotal;
+  for(int i = 1; i < size-2; i++){
+    for(int j = i + 1; j < size-1; j++){
+      partialCost = subsequenceMatrix[0][i-1].acumulateCost + subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[i+1]];
+      partialTime = subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[i+1]];
 
-      custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j]][solucao[i]];
-      tempoParcial = tempoParcial + matrizAdj[solucao[j]][solucao[i]];
+      partialCost = partialCost + ((j-i-1) * (partialTime)) + subsequenceMatrix[i+1][j].acumulateCost;
+      partialTime = partialTime + subsequenceMatrix[i+1][j].totalTime;
 
-      custo = custoParcial + ((dimension-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j+1]])) + matrizSubseq[j+1][dimension].custoAcumulado;
+      partialCost = partialCost + partialTime + distanceMatrix[solution[j]][solution[i]];
+      partialTime = partialTime + distanceMatrix[solution[j]][solution[i]];
 
-      if(custo < melhorVizinho.custoMenor){    
-        melhorVizinho.iMenor = i;
-        melhorVizinho.jMenor = j;
-        melhorVizinho.custoMenor = custo;
+      cost = partialCost + ((dimension-j) * (partialTime + distanceMatrix[solution[i]][solution[j+1]])) + subsequenceMatrix[j+1][dimension].acumulateCost;
+
+      if(cost < bestNeighbor.bestCost){    
+        bestNeighbor.iBest = i;
+        bestNeighbor.jBest = j;
+        bestNeighbor.bestCost = cost;
 	    } 
     }
   }
 
-  for(int j = 1; j < tam-2; j++){
-    for(int i = j + 1; i < tam-1; i++){
-      custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
-      tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
+  for(int j = 1; j < size-2; j++){
+    for(int i = j + 1; i < size-1; i++){
+      partialCost = subsequenceMatrix[0][j-1].acumulateCost + subsequenceMatrix[0][j-1].totalTime + distanceMatrix[solution[j-1]][solution[i]];
+      partialTime = subsequenceMatrix[0][j-1].totalTime + distanceMatrix[solution[j-1]][solution[i]];
 
-      custoParcial = custoParcial + ((i-j) * (tempoParcial + matrizAdj[solucao[i]][solucao[j]])) + matrizSubseq[j][i-1].custoAcumulado;
-      tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[j]] + matrizSubseq[j][i-1].tempoTotal;
+      partialCost = partialCost + ((i-j) * (partialTime + distanceMatrix[solution[i]][solution[j]])) + subsequenceMatrix[j][i-1].acumulateCost;
+      partialTime = partialTime + distanceMatrix[solution[i]][solution[j]] + subsequenceMatrix[j][i-1].totalTime;
 
-      custo = custoParcial + ((dimension-i) * (tempoParcial + matrizAdj[solucao[i-1]][solucao[i+1]])) + matrizSubseq[i+1][dimension].custoAcumulado;
+      cost = partialCost + ((dimension-i) * (partialTime + distanceMatrix[solution[i-1]][solution[i+1]])) + subsequenceMatrix[i+1][dimension].acumulateCost;
 
-      if(custo < melhorVizinho.custoMenor){    
-        melhorVizinho.iMenor = i;
-        melhorVizinho.jMenor = j;
-        melhorVizinho.custoMenor = custo;
+      if(cost < bestNeighbor.bestCost){    
+        bestNeighbor.iBest = i;
+        bestNeighbor.jBest = j;
+        bestNeighbor.bestCost = cost;
 	    } 
     }
   }
 
-  return melhorVizinho;
+  return bestNeighbor;
 }
 
-// Estrutura de vizinhança or-opt-2:
-vizinhoInfo oropt2(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
-  double custoParcial, custo, tempoParcial;
-  int tam = solucao.size();
-  vizinhoInfo melhorVizinho;
-  melhorVizinho.custoMenor = DBL_MAX;
+neighborInfo oropt2(vector <int> &solution, vector <vector <subsequenceInfo>> &subsequenceMatrix){
+  double partialCost, cost, partialTime;
+  int size = solution.size();
 
-  for(int i = 1; i < tam-2; i++){
-    for(int j = 1; j <= tam-3; j++){
+  neighborInfo bestNeighbor;
+  bestNeighbor.bestCost = DBL_MAX;
+
+  for(int i = 1; i < size-2; i++){
+    for(int j = 1; j <= size-3; j++){
       if(i != j){
         if(i < j){
-          custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+2]];
-          tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+2]];
+          partialCost = subsequenceMatrix[0][i-1].acumulateCost + subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[i+2]];
+          partialTime = subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[i+2]];
 
-          custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+2][j+1].custoAcumulado;
-          tempoParcial = tempoParcial + matrizSubseq[i+2][j+1].tempoTotal;
+          partialCost = partialCost + ((j-i-1) * (partialTime)) + subsequenceMatrix[i+2][j+1].acumulateCost;
+          partialTime = partialTime + subsequenceMatrix[i+2][j+1].totalTime;
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j+1]][solucao[i]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[j+1]][solucao[i]];
+          partialCost = partialCost + partialTime + distanceMatrix[solution[j+1]][solution[i]];
+          partialTime = partialTime + distanceMatrix[solution[j+1]][solution[i]];
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i]][solucao[i+1]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[i+1]];
+          partialCost = partialCost + partialTime + distanceMatrix[solution[i]][solution[i+1]];
+          partialTime = partialTime + distanceMatrix[solution[i]][solution[i+1]];
 
-          custo = custoParcial + ((dimension-j-1) * (tempoParcial + matrizAdj[solucao[i+1]][solucao[j+2]])) + matrizSubseq[j+2][dimension].custoAcumulado;
+          cost = partialCost + ((dimension-j-1) * (partialTime + distanceMatrix[solution[i+1]][solution[j+2]])) + subsequenceMatrix[j+2][dimension].acumulateCost;
         }else{
-          custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
-          tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
+          partialCost = subsequenceMatrix[0][j-1].acumulateCost + subsequenceMatrix[0][j-1].totalTime + distanceMatrix[solution[j-1]][solution[i]];
+          partialTime = subsequenceMatrix[0][j-1].totalTime + distanceMatrix[solution[j-1]][solution[i]];
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i]][solucao[i+1]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[i]][solucao[i+1]];
+          partialCost = partialCost + partialTime + distanceMatrix[solution[i]][solution[i+1]];
+          partialTime = partialTime + distanceMatrix[solution[i]][solution[i+1]];
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i+1]][solucao[j]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[i+1]][solucao[j]];
+          partialCost = partialCost + partialTime + distanceMatrix[solution[i+1]][solution[j]];
+          partialTime = partialTime + distanceMatrix[solution[i+1]][solution[j]];
 
-          custoParcial = custoParcial + ((i-j-1) * (tempoParcial)) + matrizSubseq[j][i-1].custoAcumulado;
-          tempoParcial = tempoParcial + matrizSubseq[j][i-1].tempoTotal;
+          partialCost = partialCost + ((i-j-1) * (partialTime)) + subsequenceMatrix[j][i-1].acumulateCost;
+          partialTime = partialTime + subsequenceMatrix[j][i-1].totalTime;
 
-          custo = custoParcial + ((dimension-i-1) * (tempoParcial + matrizAdj[solucao[i-1]][solucao[i+2]])) + matrizSubseq[i+2][dimension].custoAcumulado;
+          cost = partialCost + ((dimension-i-1) * (partialTime + distanceMatrix[solution[i-1]][solution[i+2]])) + subsequenceMatrix[i+2][dimension].acumulateCost;
         }
 
-        if(custo < melhorVizinho.custoMenor){    
-          melhorVizinho.iMenor = i;
-          melhorVizinho.jMenor = j;
-          melhorVizinho.custoMenor = custo;
+        if(cost < bestNeighbor.bestCost){    
+          bestNeighbor.iBest = i;
+          bestNeighbor.jBest = j;
+          bestNeighbor.bestCost = cost;
 	      } 
       }
     }
   }
 
-  return melhorVizinho;
+  return bestNeighbor;
 }
 
-// Estrutura de vizinhança or-opt-3:
-vizinhoInfo oropt3(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
-  double custoParcial, custo, tempoParcial;
-  int tam = solucao.size();
-  vizinhoInfo melhorVizinho;
-  melhorVizinho.custoMenor = DBL_MAX;
+neighborInfo oropt3(vector <int> &solution, vector <vector <subsequenceInfo>> &subsequenceMatrix){
+  double partialCost, cost, partialTime;
+  int tam = solution.size();
+  neighborInfo bestNeighbor;
+  bestNeighbor.bestCost = DBL_MAX;
 
   for(int i = 1; i < tam-3; i++){
     for(int j = 1; j <= tam-4; j++){
       if(i != j){
         if(i < j){
-          custoParcial = matrizSubseq[0][i-1].custoAcumulado + matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+3]];
-          tempoParcial = matrizSubseq[0][i-1].tempoTotal + matrizAdj[solucao[i-1]][solucao[i+3]];
+          partialCost = subsequenceMatrix[0][i-1].acumulateCost + subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[i+3]];
+          partialTime = subsequenceMatrix[0][i-1].totalTime + distanceMatrix[solution[i-1]][solution[i+3]];
 
-          custoParcial = custoParcial + ((j-i-1) * (tempoParcial)) + matrizSubseq[i+3][j+2].custoAcumulado;
-          tempoParcial = tempoParcial + matrizSubseq[i+3][j+2].tempoTotal;
+          partialCost = partialCost + ((j-i-1) * (partialTime)) + subsequenceMatrix[i+3][j+2].acumulateCost;
+          partialTime = partialTime + subsequenceMatrix[i+3][j+2].totalTime;
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[j+2]][solucao[i]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[j+2]][solucao[i]];
+          partialCost = partialCost + partialTime + distanceMatrix[solution[j+2]][solution[i]];
+          partialTime = partialTime + distanceMatrix[solution[j+2]][solution[i]];
 
-          custoParcial = custoParcial + ((2) * (tempoParcial)) + matrizSubseq[i][i+2].custoAcumulado;
-          tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal;
+          partialCost = partialCost + ((2) * (partialTime)) + subsequenceMatrix[i][i+2].acumulateCost;
+          partialTime = partialTime + subsequenceMatrix[i][i+2].totalTime;
 
-          custo = custoParcial + ((dimension-j-2) * (tempoParcial + matrizAdj[solucao[i+2]][solucao[j+3]])) + matrizSubseq[j+3][dimension].custoAcumulado;
+          cost = partialCost + ((dimension-j-2) * (partialTime + distanceMatrix[solution[i+2]][solution[j+3]])) + subsequenceMatrix[j+3][dimension].acumulateCost;
         }else{
-          custoParcial = matrizSubseq[0][j-1].custoAcumulado + matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
-          tempoParcial = matrizSubseq[0][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[i]];
+          partialCost = subsequenceMatrix[0][j-1].acumulateCost + subsequenceMatrix[0][j-1].totalTime + distanceMatrix[solution[j-1]][solution[i]];
+          partialTime = subsequenceMatrix[0][j-1].totalTime + distanceMatrix[solution[j-1]][solution[i]];
 
-          custoParcial = custoParcial + ((2) * (tempoParcial)) + matrizSubseq[i][i+2].custoAcumulado;
-          tempoParcial = tempoParcial + matrizSubseq[i][i+2].tempoTotal;
+          partialCost = partialCost + ((2) * (partialTime)) + subsequenceMatrix[i][i+2].acumulateCost;
+          partialTime = partialTime + subsequenceMatrix[i][i+2].totalTime;
 
-          custoParcial = custoParcial + tempoParcial + matrizAdj[solucao[i+2]][solucao[j]];
-          tempoParcial = tempoParcial + matrizAdj[solucao[i+2]][solucao[j]];
+          partialCost = partialCost + partialTime + distanceMatrix[solution[i+2]][solution[j]];
+          partialTime = partialTime + distanceMatrix[solution[i+2]][solution[j]];
 
-          custoParcial = custoParcial + ((i-j-1) * (tempoParcial)) + matrizSubseq[j][i-1].custoAcumulado;
-          tempoParcial = tempoParcial + matrizSubseq[j][i-1].tempoTotal;
+          partialCost = partialCost + ((i-j-1) * (partialTime)) + subsequenceMatrix[j][i-1].acumulateCost;
+          partialTime = partialTime + subsequenceMatrix[j][i-1].totalTime;
 
-          custo = custoParcial + ((dimension-i-2) * (tempoParcial + matrizAdj[solucao[i-1]][solucao[i+3]])) + matrizSubseq[i+3][dimension].custoAcumulado;
+          cost = partialCost + ((dimension-i-2) * (partialTime + distanceMatrix[solution[i-1]][solution[i+3]])) + subsequenceMatrix[i+3][dimension].acumulateCost;
         }
 
-        if(custo < melhorVizinho.custoMenor){    
-          melhorVizinho.iMenor = i;
-          melhorVizinho.jMenor = j;
-          melhorVizinho.custoMenor = custo;
+        if(cost < bestNeighbor.bestCost){    
+          bestNeighbor.iBest = i;
+          bestNeighbor.jBest = j;
+          bestNeighbor.bestCost = cost;
 	      }
       }
     }
   }
 
-  return melhorVizinho;
+  return bestNeighbor;
 }
 
-// Função que atualiza valores do custo acumulado e tempo total:
-void atualizaSubseq(vector <vector <subseqInfo>> &matrizSubseq, vector <int> &solucao){
-  int tam = solucao.size();
+// Function to update subsequence matrix with a new solution
+void updatesMatrix(vector <vector <subsequenceInfo>> &subsequenceMatrix, vector <int> &solution){
+  int tam = solution.size();
 
-  // Atualização do tempo total:
+  // Updates total time
   for(int i = 0; i < tam; i++){
     for(int j = i; j < tam; j++){
       if(i == j){
-        matrizSubseq[i][j].tempoTotal = 0;
+        subsequenceMatrix[i][j].totalTime = 0;
       }else {
-        matrizSubseq[i][j].tempoTotal = matrizSubseq[i][j-1].tempoTotal + matrizAdj[solucao[j-1]][solucao[j]];
-        matrizSubseq[j][i].tempoTotal = matrizSubseq[i][j].tempoTotal;  
+        subsequenceMatrix[i][j].totalTime = subsequenceMatrix[i][j-1].totalTime + distanceMatrix[solution[j-1]][solution[j]];
+        subsequenceMatrix[j][i].totalTime = subsequenceMatrix[i][j].totalTime;  
       }
     }
   }
 
-  // Atualização do custo acumulado:
+  // Updates acumulate cost
   for(int i = 0; i < tam; i++){
     for(int j = i; j < tam; j++){ 
       if(i == j){
-        matrizSubseq[i][j].custoAcumulado = 0;
+        subsequenceMatrix[i][j].acumulateCost = 0;
       }else {
-        matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j-1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
+        subsequenceMatrix[i][j].acumulateCost = subsequenceMatrix[i][j-1].acumulateCost + subsequenceMatrix[i][j].totalTime;
       }      
     }
   }
@@ -287,422 +284,386 @@ void atualizaSubseq(vector <vector <subseqInfo>> &matrizSubseq, vector <int> &so
   for(int i = tam-1; i >= 0; i--){
     for(int j = i; j >= 0; j--){
       if(i == j){
-        matrizSubseq[i][j].custoAcumulado = 0;
+        subsequenceMatrix[i][j].acumulateCost = 0;
       }else{
-        matrizSubseq[i][j].custoAcumulado = matrizSubseq[i][j+1].custoAcumulado + matrizSubseq[i][j].tempoTotal;
+        subsequenceMatrix[i][j].acumulateCost = subsequenceMatrix[i][j+1].acumulateCost + subsequenceMatrix[i][j].totalTime;
       }      
     }
   }
 }
 
-// Função com os movimentos de vizinhança:
-void RVND(vector <int> &solucao, vector <vector <subseqInfo>> &matrizSubseq){
-  vector <int> movimentos = {0, 1, 2, 3, 4};
-  vizinhoInfo vizinho;
+void RVND(vector <int> &solution, vector <vector <subsequenceInfo>> &subsequenceMatrix){
+  vector <int> neighborhoods = {0, 1, 2, 3, 4};
+  neighborInfo neighbor;
 
-  while(!movimentos.empty()){
-    int escolhido = rand() % movimentos.size();
+  while(!neighborhoods.empty()){
+    int choosen = rand() % neighborhoods.size();
 
-    // Realiza o movimento:
-    if(movimentos[escolhido] == 0){
-      vizinho = swap(solucao, matrizSubseq);
+    if(neighborhoods[choosen] == 0){
+      neighbor = swap(solution, subsequenceMatrix);
 
-      //Realiza o movimento:
-      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
+      if(neighbor.bestCost < subsequenceMatrix[0][dimension].acumulateCost){
 
-        int aux = solucao[vizinho.iMenor];
-	      solucao[vizinho.iMenor] = solucao[vizinho.jMenor];
-	      solucao[vizinho.jMenor] = aux;
+        int aux = solution[neighbor.iBest];
+	      solution[neighbor.iBest] = solution[neighbor.jBest];
+	      solution[neighbor.jBest] = aux;
 
-        // Atualiza a matriz de subsequências com a nova solução:
-        atualizaSubseq(matrizSubseq, solucao);
-        movimentos = {0, 1, 2, 3, 4};
+        // Updates subsequence matrix with new solution
+        updatesMatrix(subsequenceMatrix, solution);
+        neighborhoods = {0, 1, 2, 3, 4};
 
       } else {
-        movimentos.erase(movimentos.begin() + escolhido);
+        neighborhoods.erase(neighborhoods.begin() + choosen);
 
       }
 
-    }else if(movimentos[escolhido] == 1){
+    }else if(neighborhoods[choosen] == 1){
+      neighbor = reinsertion(solution, subsequenceMatrix);
 
-      vizinho = reinsertion(solucao, matrizSubseq);
+      if(neighbor.bestCost < subsequenceMatrix[0][dimension].acumulateCost){
+        vector <int> solutionInicial = solution;
 
-      // Realiza o movimento:
-      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
-        vector <int> solucaoInicial = solucao;
+        solution.erase(solution.begin()+neighbor.iBest);
+        solution.insert(solution.begin()+neighbor.jBest, solutionInicial[neighbor.iBest]);
 
-        solucao.erase(solucao.begin()+vizinho.iMenor);
-        solucao.insert(solucao.begin()+vizinho.jMenor, solucaoInicial[vizinho.iMenor]);
-
-        // Atualiza a matriz de subsequências com a nova solução:
-        atualizaSubseq(matrizSubseq, solucao);
-        movimentos = {0, 1, 2, 3, 4};
+        // Updates subsequence matrix with new solution
+        updatesMatrix(subsequenceMatrix, solution);
+        neighborhoods = {0, 1, 2, 3, 4};
 
       } else {
-        movimentos.erase(movimentos.begin() + escolhido);
+        neighborhoods.erase(neighborhoods.begin() + choosen);
 
       }
 
-    }else if(movimentos[escolhido] == 2){
+    }else if(neighborhoods[choosen] == 2){
+      neighbor = twoOpt(solution, subsequenceMatrix);
 
-      vizinho = twoOpt(solucao, matrizSubseq);
+      if(neighbor.bestCost < subsequenceMatrix[0][dimension].acumulateCost){
 
-      // Realiza o movimento:
-      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
-
-        int aux, k = vizinho.jMenor - vizinho.iMenor;
+        int aux, k = neighbor.jBest - neighbor.iBest;
 
         if(k % 2 != 0){
           k = k + 1;
         }
 
         for(int q = 0; q < k/2; q++){
-          aux = solucao[vizinho.iMenor+q];
-          solucao[vizinho.iMenor+q] = solucao[vizinho.jMenor-q];
-          solucao[vizinho.jMenor-q] = aux;
+          aux = solution[neighbor.iBest+q];
+          solution[neighbor.iBest+q] = solution[neighbor.jBest-q];
+          solution[neighbor.jBest-q] = aux;
         }
 
-        // Atualiza a matriz de subsequências com a nova solução:
-        atualizaSubseq(matrizSubseq, solucao);
-        movimentos = {0, 1, 2, 3, 4};
+        // Updates subsequence matrix with new solution
+        updatesMatrix(subsequenceMatrix, solution);
+        neighborhoods = {0, 1, 2, 3, 4};
 
       } else {
-        movimentos.erase(movimentos.begin() + escolhido);
+        neighborhoods.erase(neighborhoods.begin() + choosen);
 
       }
 
-    }else if(movimentos[escolhido] == 3){
+    }else if(neighborhoods[choosen] == 3){
 
-      vizinho = oropt2(solucao, matrizSubseq);
+      neighbor = oropt2(solution, subsequenceMatrix);
 
-      // Realiza o movimento:
-      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
+      if(neighbor.bestCost < subsequenceMatrix[0][dimension].acumulateCost){
 
-        if(vizinho.iMenor < vizinho.jMenor){
-          solucao.insert(solucao.begin() + vizinho.jMenor + 2, solucao[vizinho.iMenor]); 
-          solucao.insert(solucao.begin() + vizinho.jMenor + 3, solucao[vizinho.iMenor+1]); 
-          solucao.erase(solucao.begin() + vizinho.iMenor);
-          solucao.erase(solucao.begin() + vizinho.iMenor);
+        if(neighbor.iBest < neighbor.jBest){
+          solution.insert(solution.begin() + neighbor.jBest + 2, solution[neighbor.iBest]); 
+          solution.insert(solution.begin() + neighbor.jBest + 3, solution[neighbor.iBest+1]); 
+          solution.erase(solution.begin() + neighbor.iBest);
+          solution.erase(solution.begin() + neighbor.iBest);
         } else {
-          solucao.insert(solucao.begin() + vizinho.jMenor, solucao[vizinho.iMenor]); 
-          solucao.insert(solucao.begin() + vizinho.jMenor + 1, solucao[vizinho.iMenor + 2]); 
-          solucao.erase(solucao.begin() + vizinho.iMenor + 2);
-          solucao.erase(solucao.begin() + vizinho.iMenor + 2);
+          solution.insert(solution.begin() + neighbor.jBest, solution[neighbor.iBest]); 
+          solution.insert(solution.begin() + neighbor.jBest + 1, solution[neighbor.iBest + 2]); 
+          solution.erase(solution.begin() + neighbor.iBest + 2);
+          solution.erase(solution.begin() + neighbor.iBest + 2);
         }
 
-        // Atualiza a matriz de subsequências com a nova solução:
-        atualizaSubseq(matrizSubseq, solucao);
-        movimentos = {0, 1, 2, 3, 4};
+        // Updates subsequence matrix with new solution
+        updatesMatrix(subsequenceMatrix, solution);
+        neighborhoods = {0, 1, 2, 3, 4};
 
       } else {
-        movimentos.erase(movimentos.begin() + escolhido);
+        neighborhoods.erase(neighborhoods.begin() + choosen);
       }   
 
-    }else if(movimentos[escolhido] == 4){
+    }else if(neighborhoods[choosen] == 4){
+      neighbor = oropt3(solution, subsequenceMatrix);
 
-      vizinho = oropt3(solucao, matrizSubseq);
+      if(neighbor.bestCost < subsequenceMatrix[0][dimension].acumulateCost){
 
-      //Realiza o movimento:
-      if(vizinho.custoMenor < matrizSubseq[0][dimension].custoAcumulado){
-
-        if(vizinho.iMenor < vizinho.jMenor){
-          solucao.insert(solucao.begin() + vizinho.jMenor + 3, solucao[vizinho.iMenor]);
-          solucao.insert(solucao.begin() + vizinho.jMenor + 4, solucao[vizinho.iMenor+1]); 
-          solucao.insert(solucao.begin() + vizinho.jMenor + 5, solucao[vizinho.iMenor+2]);
-          solucao.erase(solucao.begin() + vizinho.iMenor);
-          solucao.erase(solucao.begin() + vizinho.iMenor);
-          solucao.erase(solucao.begin() + vizinho.iMenor);
+        if(neighbor.iBest < neighbor.jBest){
+          solution.insert(solution.begin() + neighbor.jBest + 3, solution[neighbor.iBest]);
+          solution.insert(solution.begin() + neighbor.jBest + 4, solution[neighbor.iBest+1]); 
+          solution.insert(solution.begin() + neighbor.jBest + 5, solution[neighbor.iBest+2]);
+          solution.erase(solution.begin() + neighbor.iBest);
+          solution.erase(solution.begin() + neighbor.iBest);
+          solution.erase(solution.begin() + neighbor.iBest);
         } else {
-          solucao.insert(solucao.begin() + vizinho.jMenor, solucao[vizinho.iMenor]);
-          solucao.insert(solucao.begin() + vizinho.jMenor + 1, solucao[vizinho.iMenor + 2]); 
-          solucao.insert(solucao.begin() + vizinho.jMenor + 2, solucao[vizinho.iMenor + 4]); 
-          solucao.erase(solucao.begin() + vizinho.iMenor + 3);
-          solucao.erase(solucao.begin() + vizinho.iMenor + 3);
-          solucao.erase(solucao.begin() + vizinho.iMenor + 3);
+          solution.insert(solution.begin() + neighbor.jBest, solution[neighbor.iBest]);
+          solution.insert(solution.begin() + neighbor.jBest + 1, solution[neighbor.iBest + 2]); 
+          solution.insert(solution.begin() + neighbor.jBest + 2, solution[neighbor.iBest + 4]); 
+          solution.erase(solution.begin() + neighbor.iBest + 3);
+          solution.erase(solution.begin() + neighbor.iBest + 3);
+          solution.erase(solution.begin() + neighbor.iBest + 3);
         }
 
-        // Atualiza a matriz de subsequências com a nova solução:
-        atualizaSubseq(matrizSubseq, solucao);
-        movimentos = {0, 1, 2, 3, 4};
+        // Updates subsequence matrix with new solution
+        updatesMatrix(subsequenceMatrix, solution);
+        neighborhoods = {0, 1, 2, 3, 4};
 
       } else {
-        movimentos.erase(movimentos.begin() + escolhido);
+        neighborhoods.erase(neighborhoods.begin() + choosen);
 
       }      
     }
   }
 }
 
-vector <int> pertub(vector <int> &solucao){
-  vector <int> solucaoModificada;
-	vector <int> subsequencia1;
-	vector <int> subsequencia2;
-	int i, j, tam1 = 0, tam2 = 0, tam = solucao.size();
+vector <int> pertub(vector <int> &solution){
+  vector <int> newSolution;
+	vector <int> firstSubsequence;
+	vector <int> secondSubsequence;
+	int i, j, sizeFirst = 0, sizeSecond = 0, size = solution.size();
 	
-	//Gera tamanho das subsequencias:
-	if(tam < 20){
-		tam1 = 2;
-		tam2 = 2;
-
+	// Generates subsequence sizes
+	if(size < 20){
+		sizeFirst = 2;
+		sizeSecond = 2;
 	} else {
-
-		while(tam1 < 2 || tam1 > (tam/10)){
-			tam1 = rand() % tam;
-		}
-
-		while(tam2 < 2 || tam2 > (tam/10)){
-			tam2 = rand() % tam;
-		}
-
+		while(sizeFirst < 2 || sizeFirst > (size/10)) sizeFirst = rand() % size;
+		while(sizeSecond < 2 || sizeSecond > (size/10)) sizeSecond = rand() % size; 
 	}
 	
-	//Gera posição incial da subsequencia 1:
-	i = rand() % (tam - tam1);
-  while(i == 0){
-      i = rand() % (tam - tam1);
-  }
+	// Generates initial position of first subsequence
+	i = rand() % (size - sizeFirst);
+  while(i == 0) i = rand() % (size - sizeFirst);
 
-	//Gera posição incial da subsequencia 2:
-	j = rand() % (tam - tam2);
-	while((j > (i - tam2) && j < (i + tam1)) || j == 0){
-		j = rand() % (tam - tam2);
-	}
+	// Generates initial position of second subsequence
+	j = rand() % (size - sizeSecond);
+	while((j > (i - sizeSecond) && j < (i + sizeFirst)) || j == 0) j = rand() % (size - sizeSecond);
 
-	//Cria um vetor da subsequencia 1:
-	int contadorIteracoes = 0;
-	for(int q = 0; q < tam; q++){
-		if(q >= i){
-			subsequencia1.push_back(solucao[q]);
-      contadorIteracoes++;
-			if(contadorIteracoes == tam1){
-				break;
-			}
+	// Creates vector with first subsequence
+	int iter = 0;
+	for(int k = 0; k < size; k++){
+		if(k >= i){
+			firstSubsequence.push_back(solution[k]);
+      iter++;
+			if(iter == sizeFirst) break;
 		}
 	}
 	
-	//Cria um vetor da subsequencia 2:
-	contadorIteracoes = 0;
-	for(int q = 0; q < tam; q++){
-		if(q >= j){
-			subsequencia2.push_back(solucao[q]);
-      contadorIteracoes++;
-			if(contadorIteracoes == tam2){
-				break;
-			}
+	// Creates vector with second subsequence
+	iter = 0;
+	for(int k = 0; k < size; k++){
+		if(k >= j){
+			secondSubsequence.push_back(solution[k]);
+      iter++;
+			if(iter == sizeSecond) break;
 		}
 	}
 
 	if(j < i){	
-    //Apaga subsequencia 1:
-    solucaoModificada = solucao;
-    int apagados = 0;
-    for(int q = 0; q < tam; q++){
-      if(q >= i){
-        solucaoModificada.erase(solucaoModificada.begin() + q - apagados);
-        apagados++;
-        if(apagados == tam1){
-          break;
-        }
+    newSolution = solution;
+
+    // Deletes first subsequence
+    int deleted = 0;
+    for(int k = 0; k < size; k++){
+      if(k >= i){
+        newSolution.erase(newSolution.begin() + k - deleted);
+        deleted++;
+        if(deleted == sizeFirst) break;
       }
     }
 
-    //Apaga subsequencia 2:
-    apagados = 0;
-    for(int q = 0; q < tam; q++){
-      if(q >= j){
-        solucaoModificada.erase(solucaoModificada.begin() + q - apagados);
-        apagados++;
-        if(apagados == tam2){
-          break;
-        }
+    // Deletes second subsequence
+    deleted = 0;
+    for(int k = 0; k < size; k++){
+      if(k >= j){
+        newSolution.erase(newSolution.begin() + k - deleted);
+        deleted++;
+        if(deleted == sizeSecond) break;
       }
     }
 
-    //Insere subsequencia 2 no lugar da 1:
-    int colocados = 0;
-    for(int q = 0; q < subsequencia2.size(); q++){
-      solucaoModificada.insert(solucaoModificada.begin() + i + colocados - tam2, subsequencia2[q]);
-      colocados++;
+    // Inserts second subsequence
+    int inserted = 0;
+    for(int k = 0; k < secondSubsequence.size(); k++){
+      newSolution.insert(newSolution.begin() + i + inserted - sizeSecond, secondSubsequence[k]);
+      inserted++;
     }
         
-    //Insere subsequencia 1 no lugar da 2:
-    colocados = 0;
-    for(int q = 0; q < subsequencia1.size(); q++){
-      solucaoModificada.insert(solucaoModificada.begin() + j + colocados, subsequencia1[q]);
-      colocados++;
+    // Inserts first subsequence
+    inserted = 0;
+    for(int k = 0; k < firstSubsequence.size(); k++){
+      newSolution.insert(newSolution.begin() + j + inserted, firstSubsequence[k]);
+      inserted++;
     }
       
 	} else {
+    newSolution = solution;
 
-    //Apaga subsequencia 1:
-    solucaoModificada = solucao;
-    int apagados = 0;
-    for(int q = 0; q < tam; q++){
-      if(q >= j){
-        solucaoModificada.erase(solucaoModificada.begin() + q - apagados);
-        apagados++;
-        if(apagados == tam2){
-          break;
-        }
+    // Deletes second subsequence
+    int deleted = 0;
+    for(int k = 0; k < size; k++){
+      if(k >= j){
+        newSolution.erase(newSolution.begin() + k - deleted);
+        deleted++;
+        if(deleted == sizeSecond) break;
       }
     }
 
-    //Apaga subsequencia 2:
-    apagados = 0;
-    for(int q = 0; q < tam; q++){
-      if(q >= i){
-        solucaoModificada.erase(solucaoModificada.begin() + q - apagados);
-        apagados++;
-        if(apagados == tam1){
-          break;
-        }
+    // Deletes first subsequence
+    deleted = 0;
+    for(int k = 0; k < size; k++){
+      if(k >= i){
+        newSolution.erase(newSolution.begin() + k - deleted);
+        deleted++;
+        if(deleted == sizeFirst) break; 
       }
 	  }
 
-    //Insere subsequencia 1 no lugar da 2:
-    int colocados = 0;
-    for(int q = 0; q < subsequencia1.size(); q++){
-      solucaoModificada.insert(solucaoModificada.begin() + j + colocados - tam1, subsequencia1[q]);
-      colocados++;
+    // Inserts first subsequence
+    int inserted = 0;
+    for(int k = 0; k < firstSubsequence.size(); k++){
+      newSolution.insert(newSolution.begin() + j + inserted - sizeFirst, firstSubsequence[k]);
+      inserted++;
     }
         
-    //Insere subsequencia 2 no lugar da 1:
-    colocados = 0;
-    for(int q = 0; q < subsequencia2.size(); q++){
-      solucaoModificada.insert(solucaoModificada.begin() + i + colocados, subsequencia2[q]);
-      colocados++;
+    // Inserts second subsequence
+    inserted = 0;
+    for(int k = 0; k < secondSubsequence.size(); k++){
+      newSolution.insert(newSolution.begin() + i + inserted, secondSubsequence[k]);
+      inserted++;
     }
   }
 		
-  return solucaoModificada;
+	return newSolution;	
 }
 
-// Função referente à etapa da construção:
-vector <int> construcao(vector <int> listaCandidatos, double valorAleatorio){
-  vector <int> solucaoInicial;
+vector <int> construction(vector <int> candidatesList, double alpha){
+  vector <int> initialSolution;
 
-  // Insere depósito na solução:
-  solucaoInicial.push_back(listaCandidatos[0]);
-  solucaoInicial.push_back(listaCandidatos[0]);
+  // Insert depot
+  initialSolution.push_back(candidatesList[0]);
+  initialSolution.push_back(candidatesList[0]);
 
-  // Apaga da lista de candidatos:
-  listaCandidatos.erase(listaCandidatos.begin());
+  // Deletes it from candidates list
+  candidatesList.erase(candidatesList.begin());
 
-  // Escolhe 3 vertices aleatoriamente:
+  // Chooses 3 random vertices
   for(int i = 0; i < 3; i++){
-    int j = rand() % listaCandidatos.size();
-    solucaoInicial.insert(solucaoInicial.begin()+1, listaCandidatos[j]); 
-    listaCandidatos.erase(listaCandidatos.begin()+j);
+    int j = rand() % candidatesList.size();
+    initialSolution.insert(initialSolution.begin()+1, candidatesList[j]); 
+    candidatesList.erase(candidatesList.begin()+j);
   }
 
-  while(!listaCandidatos.empty()){
-    vector <insercaoInfo> custoInsercao((solucaoInicial.size()-1) * listaCandidatos.size());
+  // Calculates insertion cost of vertices on solution
+  while(!candidatesList.empty()){
+    vector <insertionInfo> insertionCost((initialSolution.size()-1) * candidatesList.size());
 
-    for(int j = 0, l = 1, q = 0; j < solucaoInicial.size()-1; j++, l++){
-      for(auto k : listaCandidatos){
-        custoInsercao[q].custo = matrizAdj[solucaoInicial[j]][k] + matrizAdj[solucaoInicial[l]][k] - matrizAdj[solucaoInicial[j]][solucaoInicial[l]];
-        custoInsercao[q].noInserido = k;
-        custoInsercao[q].deslocado = j;
-        q++;
+    for(int i = 0, j = 1, k = 0; i < initialSolution.size()-1; i++, j++){
+      for(auto l : candidatesList){
+        insertionCost[k].cost = distanceMatrix[initialSolution[i]][l] + distanceMatrix[initialSolution[j]][l] - distanceMatrix[initialSolution[i]][initialSolution[j]];
+        insertionCost[k].insertedNode = l;
+        insertionCost[k].deletedEdge = i;
+        k++;
       }
     }
 
-    // Ordena os custos de insercao em ordem crescente:
-    sort(custoInsercao.begin(), custoInsercao.end(), comparacao);
+    // Orders insertion costs
+    sort(insertionCost.begin(), insertionCost.end(), compares);
 
-    // Gera quantidade de elementos iniciais a serem escolhidos aleatoriamente no percurso:
-    int elementos = valorAleatorio * custoInsercao.size();
-    int i = rand() % elementos;
+    int elements = alpha * insertionCost.size();
+    int i = rand() % elements;
 
-    // Insere vertice escolhido no percuso:
-    solucaoInicial.insert(solucaoInicial.begin() + (custoInsercao[i].deslocado + 1), custoInsercao[i].noInserido);
+    // Inserts choosen node
+    initialSolution.insert(initialSolution.begin() + (insertionCost[i].deletedEdge + 1), insertionCost[i].insertedNode);
 
-    // Apaga da lista de candidatos o vertice que foi inserido:
-    for(int j = 0; j < listaCandidatos.size(); j++){
-      if(listaCandidatos[j] == custoInsercao[i].noInserido)
-        listaCandidatos.erase(listaCandidatos.begin()+j);
+    // Deletes inserted node from candidates list
+    for(int j = 0; j < candidatesList.size(); j++){
+      if(candidatesList[j] == insertionCost[i].insertedNode)
+        candidatesList.erase(candidatesList.begin()+j);
     }
   }
 
-  return solucaoInicial;
+  return initialSolution;
 }
 
-// Algoritmo principal:
-double mlp(int iIls, int vertices){
-  double custo = DBL_MAX, custoAtual, custoFinal = DBL_MAX;
-  vector <int> destinos, solucao, solucaoAtual, solucaoFinal;
-  vector <vector <subseqInfo>> matrizSubseq(dimension+1, vector <subseqInfo> (dimension+1));
+double search(int iIls, int dimension){
+  double bestCurrentCost = DBL_MAX, currentCost, finalCost = DBL_MAX;
+  vector <int> vertices, bestCurrentSolution, currentSolution, finalSolution;
+  vector <vector <subsequenceInfo>> subsequenceMatrix(dimension+1, vector <subsequenceInfo> (dimension+1));
 
-  // Forma vector com todos os vértices (destinos):
-  for(int i = 1; i <= vertices; i++){
-    destinos.push_back(i);
+  // Creates vector with vertices
+  for(int i = 0; i < dimension; i++){
+    vertices.push_back(i+1);
   }
 
   for(int iterMax = 0; iterMax < 10; iterMax++){
-    double valorAleatorio = (rand() % 90) / 100.0 + 0.1;
+    double alpha = (rand() % 90) / 100.0 + 0.1;
 
-    solucaoAtual = construcao(destinos, valorAleatorio);
-    atualizaSubseq(matrizSubseq, solucaoAtual);
+    currentSolution = construction(vertices, alpha); // Generates initial solution
+    updatesMatrix(subsequenceMatrix, currentSolution);
 
-    solucao = solucaoAtual;
+    bestCurrentSolution = currentSolution;
 
     int iterIls = 0;
     while(iterIls < iIls){
-      RVND(solucaoAtual, matrizSubseq);
+      RVND(currentSolution, subsequenceMatrix);
 
-      custoAtual = matrizSubseq[0][dimension].custoAcumulado;
+      currentCost = subsequenceMatrix[0][dimension].acumulateCost;
 
-      if(custoAtual < custo){
-        solucao = solucaoAtual;
-        custo = custoAtual;
+      if(currentCost < bestCurrentCost){
+        bestCurrentSolution = currentSolution;
+        bestCurrentCost = currentCost;
         iterIls = 0;
       }
 
-      solucaoAtual = pertub(solucao);
-      atualizaSubseq(matrizSubseq, solucaoAtual);
+      currentSolution = pertub(bestCurrentSolution);
+      updatesMatrix(subsequenceMatrix, currentSolution);
 
       iterIls++;
     }
 
-    if(custo < custoFinal){
-      solucaoFinal = solucao;
-      custoFinal = custo;
+    if(bestCurrentCost < finalCost){
+      finalSolution = bestCurrentSolution;
+      finalCost = bestCurrentCost;
     }
   }
 
-  cout << "Solução: ";
-  for(int i = 0; i < solucaoFinal.size(); i++){
-    cout << solucaoFinal[i] << " ";
+  cout << endl << "Solution: ";
+  for(int i = 0; i < finalSolution.size(); i++){
+    cout << finalSolution[i] << " ";
   }
 
-  cout << endl;
-
-  return custoFinal;  
+  return finalCost;  
 }
 
 int main(int argc, char** argv) {
-  // Inicio da contagem do tempo:  
-  clock_t inicio = clock();
+
+  clock_t start = clock(); // Starts time counting
     
-  readData(argc, argv, &dimension, &matrizAdj);
+  readData(argc, argv, &dimension, &distanceMatrix);
   srand(time(NULL));
 
   int iIls;
     
-  if(dimension > 100){
+  if(dimension >= 100){
     iIls = 100;
   } else {
     iIls = dimension;
   }
 
-  double custoAcumuladoFinal = mlp(iIls, dimension);
+  double cost = search(iIls, dimension);
 
-  // Fim da contagem do tempo:
-  clock_t fim = clock();
-  double tempo = ((double) (fim - inicio)) / CLOCKS_PER_SEC;
+  // Ends time counting
+  clock_t end = clock();
+  double time = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-  cout << "Custo: " << custoAcumuladoFinal << endl;
-  cout << "Tempo: " << tempo << endl;
+  cout << endl << "Cost: " << cost << endl;
+  cout << "Time: " << time << endl << endl;
     
   return 0;
+
 }
